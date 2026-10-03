@@ -286,9 +286,12 @@ added to it at their defaults at the first start, and the log says so
 (`settings: added <name> (new in this version) at its default`). The
 launcher's own values are written only when the file is missing, so a
 change to them in a new version reaches you only if you delete the file.
-So a `config.toml` from before this version gets `display.high_res_hud`
-and `display.high_res_text` from the game, on: set them to `false` by hand
-([Configuration](CONFIGURATION.md#displayhigh_res_hud)).
+`display.high_res_hud` and `display.high_res_text` are added off. v2026.10.02
+added `high_res_text` on, which takes about 260 MB at the menus and with
+EmulationStation in memory could run the handheld out of memory (exit
+status 137): if your `config.toml` has
+`high_res_text = true`, set it to `false`
+([Configuration](CONFIGURATION.md#displayhigh_res_text)).
 
 Compiled shader programs are stored under a hash of their source and of the
 driver's version. Programs that a new version changes are compiled again
@@ -319,6 +322,7 @@ Read `halo/log.txt` first; most problems name themselves there.
 | `The Halo game data was not found: .../maps/ui.map is missing` | The host found no maps. If you copied a `maps/` folder by hand, check that `ui.map` is in `halo/maps/`. |
 | The screen stays black for about a minute at the first start | The game is setting up its cache in `save/z`, as the screen said before. Later starts take seconds. |
 | `Halo is running already; this start was refused` | Halo was started while it ran. |
+| `Halo was stopped` (exit status 137) | The system killed the game, most likely when memory ran out. In `config.toml`, set `high_res_text = false` and `high_res_hud = false`, and unset `HALO_HIGH_RES_TEXT` and `HALO_HIGH_RES_HUD` if you set them (they override the file). |
 | `Halo stopped unexpectedly (exit status N)` | The game crashed or could not start; the details are in `log.txt`. |
 | The maps do not load | The PC version's files do not work. Use the Xbox version. |
 | The buttons are wrong | `sdl_mapping.py` builds the mapping from EmulationStation's controller configuration. Check that the handheld's controls are configured in EmulationStation. |

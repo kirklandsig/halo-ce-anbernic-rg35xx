@@ -153,9 +153,16 @@ fi
 supervised ./halo
 status=$?
 echo "exit status $status"
-# (0: quit from the game; 130 and 143: stopped by a signal)
+# (0: quit from the game; 130 and 143: stopped by a signal; 137: killed,
+# most likely by the kernel when memory ran out, as this script's own kill
+# comes only after a stop, which ends it above)
 case "$status" in
 0 | 130 | 143) ;;
+137)
+	supervised python3 halo_screen.py wait 30 "Halo was stopped" "The system stopped Halo (exit status 137), most likely because the handheld ran out of memory. In roms/ports/halo/config.toml, set high_res_text = false and high_res_hud = false: the high-res text alone takes about 260 MB.
+
+Press a button to go back."
+	;;
 *)
 	supervised python3 halo_screen.py wait 30 "Halo stopped" "Halo stopped unexpectedly (exit status $status). What happened is in roms/ports/halo/log.txt.
 

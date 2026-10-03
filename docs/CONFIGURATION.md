@@ -100,8 +100,8 @@ launcher writes another value, the table says so.
 | [`display.vsync`](#displayvsync) | boolean | `true` | | `HALO_NO_VSYNC` (set is false) |
 | [`display.interpolation`](#displayinterpolation) | boolean | `true` | `true` | `HALO_INTERPOLATION` (value) |
 | [`display.frame_pacing`](#displayframe_pacing) | boolean | `true` | | `HALO_FRAME_PACING` (value) |
-| [`display.high_res_hud`](#displayhigh_res_hud) | boolean | `true` | `false` | `HALO_HIGH_RES_HUD` (value) |
-| [`display.high_res_text`](#displayhigh_res_text) | boolean | `true` | `false` | `HALO_HIGH_RES_TEXT` (value) |
+| [`display.high_res_hud`](#displayhigh_res_hud) | boolean | `false` | `false` | `HALO_HIGH_RES_HUD` (value) |
+| [`display.high_res_text`](#displayhigh_res_text) | boolean | `false` | `false` | `HALO_HIGH_RES_TEXT` (value) |
 | [`display.player_names`](#displayplayer_names-and-displayplayer_name_scale) | string | `"all"` | | `HALO_PLAYER_NAMES` (value) |
 | [`display.player_name_scale`](#displayplayer_names-and-displayplayer_name_scale) | real | `1.0` | | `HALO_PLAYER_NAME_SCALE` (value) |
 | [`debug.sort_models`](#debugsort_models) | boolean | `true` | | `HALO_SORT_MODELS` (value) |
@@ -313,20 +313,19 @@ frames against 17% paced). Try both.
 
 | Type | Default | Launcher | Variable |
 | --- | --- | --- | --- |
-| boolean | `true` | `false` | `HALO_HIGH_RES_HUD` |
+| boolean | `false` | `false` | `HALO_HIGH_RES_HUD` |
 
 Upstream's high-resolution HUD: the meters, counters, motion sensor,
 reticles, waypoints and scopes drawn from redrawn textures 8 times the size
 of the maps' bitmaps (`hud_hires.c`). At the handheld's 640x480 it looks the
-same, and in a30 it took 77 MB more memory and about 1 fps, so the launcher
-writes it off in a new `config.toml`. A `config.toml` from an earlier
-version gets it from the game, on: set it to `false` there by hand.
+same, and in a30 it took 77 MB more memory and about 1 fps, so it is off
+here by default (upstream's other builds have it on).
 
 ### `display.high_res_text`
 
 | Type | Default | Launcher | Variable |
 | --- | --- | --- | --- |
-| boolean | `true` | `false` | `HALO_HIGH_RES_TEXT` |
+| boolean | `false` | `false` | `HALO_HIGH_RES_TEXT` |
 
 Upstream's high-resolution text: the menus' and the HUD's text drawn with
 TrueType fonts (Overpass, `port/assets/fonts`) rather than with the maps'
@@ -338,10 +337,14 @@ not a sharper one. In a30 on the RG35XX
 H it made no difference to the frame rate once the level ran, but the
 level's first five seconds ran at 20 to 25 fps (against 60) while its
 glyphs were drawn, and the game held about 100 MB more memory (435 to 452 MB
-resident against 341), so the launcher writes it off in a new
-`config.toml`. A `config.toml` from an earlier version gets it from the
-game, on: set it to `false` there by hand, or keep it for its fonts
-and titles.
+resident against 341). At the menus it costs more: launched from
+EmulationStation, which stays in memory while a port runs, the game held
+465 to 486 MB against 207 to 230, with about 250 MB of memory left against
+560. With this on, the 1 GB ran out as a level started: the kernel killed
+the game (exit status 137). So it is off here by default
+(upstream's other builds have it on). v2026.10.02 added it to an existing
+`config.toml` on: set it to `false` there if the game stops with exit
+status 137.
 
 ### `display.player_names` and `display.player_name_scale`
 
