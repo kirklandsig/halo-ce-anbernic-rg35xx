@@ -71,13 +71,13 @@ Dynamic resolution is on, as it is by default. c10's opening holds 60 after
 its first 45 seconds. The b30 battle varies from run to run by 2 or 3 fps.
 
 <!-- performance table: update the numbers and the date here as optimisations land -->
-Last updated: 2026-10-02 (release v2026.10.02).
+Last updated: 2026-10-06 (release v2026.10.06).
 
 | Scene | `render_scale = 0.75` (480x360, default) | `render_scale = 1.0` (640x480) |
 | --- | --- | --- |
 | Main menu | 60 | 60 |
 | c10, 343 Guilty Spark (swamp) | about 57 (46–60) | about 56 (23–60) |
-| b30, The Silent Cartographer (beach battle) | about 41 (35–46) | about 38 (28–47) |
+| b30, The Silent Cartographer (beach battle) | about 43 (38–47) | about 38 (28–47) |
 | a30, Halo (level opening) | about 59 (39–60) | about 40 (26–60) |
 <!-- end of performance table -->
 
@@ -96,7 +96,7 @@ optimisations and the measurements behind them are in
 ## Supported devices
 
 The port needs an Allwinner H700 (4x Cortex-A53 at 1.5 GHz, Mali-G31 MP2,
-1 GB RAM) running Knulli.
+1 GB RAM), with Knulli or another firmware that has PortMaster.
 
 | Device | Screen | Status |
 | --- | --- | --- |
@@ -110,10 +110,17 @@ The port needs an Allwinner H700 (4x Cortex-A53 at 1.5 GHz, Mali-G31 MP2,
 | Anbernic RG34XX SP | 720x480 | Works, reported by a user ([#1](https://github.com/kirklandsig/halo-ce-anbernic-rg35xx/issues/1)) |
 | Anbernic RG34XX | 720x480 | Untested, expected to work |
 
+| Firmware | How | Status |
+| --- | --- | --- |
+| Knulli (Gladiator II) | the Knulli zip | Tested |
+| Knulli (Gladiator II) | the PortMaster zip | Tested |
+| muOS | the PortMaster zip | Expected to work: its system has what the port needs (the same Mali driver as Knulli, SDL2 with the Mali video driver, glibc 2.38), checked from its 2601.1 image. Not yet tested on a handheld |
+| ArkOS and others with PortMaster | the PortMaster zip | Untested. The host needs glibc 2.30 or newer and SDL2 2.0.18 or newer |
+| ROCKNIX | the PortMaster zip | Untested. ROCKNIX can use the open Panfrost driver instead of Arm's, which the port has not been tested with |
+
 TrimUI handhelds and devices with other SoCs are not supported: they have
-different GPUs and drivers. Other firmware on the H700 (muOS, ROCKNIX) is
-untested. If you try another device or firmware, please open an issue with
-the result and the `halo/log.txt`.
+different GPUs and drivers. If you try another device or firmware, please
+open an issue with the result and your `halo/log.txt`.
 
 ## Requirements
 
@@ -124,8 +131,9 @@ the result and the `halo/log.txt`.
 - About 3 GB free on the card: the extracted `maps/` (1.8 GB) and the cache
   the game sets up at its first start (0.8 GB), plus room for the disc image
   until the maps are copied.
-- The [latest release](https://github.com/kirklandsig/halo-ce-anbernic-rg35xx/releases/latest) (`halo-ce-knulli-<version>.zip`), or the
-  files built as described in [Build from source](#build-from-source).
+- The [latest release](https://github.com/kirklandsig/halo-ce-anbernic-rg35xx/releases/latest) (`halo-ce-knulli-<version>.zip`, or
+  `halo-ce-portmaster-<version>.zip` for PortMaster), or the files built as
+  described in [Build from source](#build-from-source).
 
 ## Install
 
@@ -147,6 +155,11 @@ folder into `halo/`. To quit, hold the hotkey (MENU, or SELECT) and press
 START. To update, unzip a newer release over the old files: `maps/`,
 `save/` and `config.toml` stay.
 
+With PortMaster (on Knulli or another firmware) instead: put
+`halo-ce-portmaster-<version>.zip` in PortMaster's `autoinstall` folder and
+start PortMaster, then copy the disc image into `ports/halo/`
+([Install](docs/INSTALL.md#installing-with-portmaster)).
+
 The resulting layout:
 
 ```
@@ -158,6 +171,7 @@ The resulting layout:
     ├── halo_extract.py
     ├── halo_screen.py
     ├── sdl_mapping.py
+    ├── config.default.toml
     ├── config.toml      written at the first launch
     ├── log.txt          the log of the last launch
     ├── maps/            extracted from your disc image
@@ -181,6 +195,10 @@ The build runs on Linux x86-64. It was done on Ubuntu 24.04 under WSL.
 - Android NDK r28c: it builds the guest and provides the GLES and EGL headers.
 - `gcc-aarch64-linux-gnu` (13.x): the host, an ordinary aarch64 glibc program.
 - SDL2 headers from the SDL `release-2.30.12` tag. `build.sh` downloads them.
+- glibc 2.31 and libglvnd's EGL and OpenGL ES, Debian 11's, which the host
+  is built against so that it runs on firmware with an older C library than
+  Knulli's. `build.sh` downloads them (`port/knulli/glibc_sysroot.sh`, which
+  checks the packages' checksums) and unpacks them with `dpkg-deb`.
 
 ```sh
 sudo apt install python3 ninja-build git curl gcc-aarch64-linux-gnu
@@ -191,15 +209,15 @@ unzip -q android-ndk-r28c-linux.zip
 
 ### The device's libraries
 
-The host links against the handheld's own `libSDL2-2.0.so.0` and
-`libmali.so.0` (Arm's driver, which provides OpenGL ES and EGL). Copy them
-from the handheld's `/usr/lib` into a `sysroot/` folder. They are used only
-at link time and must not be committed.
+The host links against the handheld's own `libSDL2-2.0.so.0`. Copy it from
+the handheld's `/usr/lib` into a `sysroot/` folder. It is used only at link
+time and must not be committed. EGL and OpenGL ES are linked by their usual
+names (`libEGL.so.1`, `libGLESv2.so.2`), against Debian 11's libglvnd.
 
 ```sh
 mkdir -p sysroot
-scp 'root@<handheld>:/usr/lib/libSDL2-2.0.so.0*' 'root@<handheld>:/usr/lib/libmali.so.0*' sysroot/
-# or: adb pull /usr/lib/libSDL2-2.0.so.0 sysroot/ ; adb pull /usr/lib/libmali.so.0 sysroot/
+scp 'root@<handheld>:/usr/lib/libSDL2-2.0.so.0*' sysroot/
+# or: adb pull /usr/lib/libSDL2-2.0.so.0 sysroot/
 ```
 
 ### Build
@@ -215,7 +233,8 @@ ANDROID_NDK=$PWD/android-ndk-r28c SYSROOT_LIB=$PWD/sysroot ./build.sh
    `UPSTREAM_COMMIT`;
 2. applies `patches/halo-ce-universal-knulli.patch` and copies `port/knulli`
    into the upstream tree;
-3. downloads the SDL2 2.30.12 headers into `work/`;
+3. downloads the SDL2 2.30.12 headers, and glibc 2.31 and libglvnd, into
+   `work/`;
 4. runs `python3 configure.py --release --android-ndk <ndk> --android-guest-cc clang-22`
    (the first time, and again for another upstream commit; it downloads
    musl and SDL3 for the guest), then
@@ -354,16 +373,20 @@ lawful depends on where you live; this is not legal advice. See the
 
 ### Does it need PortMaster?
 
-No. It is a plain Knulli port: a launcher script in `roms/ports` and a
-folder. It uses the firmware's own SDL2 and Mali driver and none of
-PortMaster's runtimes.
+Not on Knulli: the Knulli zip is a plain port, a launcher script in
+`roms/ports` and a folder. Each release also has a PortMaster zip, for
+PortMaster on Knulli or on other firmware
+([Install](docs/INSTALL.md#installing-with-portmaster)). Both use the
+firmware's own SDL2 and graphics driver and none of PortMaster's runtimes.
 
 ### Does it work on muOS or ROCKNIX?
 
-Untested. The host is built against Knulli's SDL2 (2.30.12) and Arm's
-framebuffer Mali driver. Other firmware for the H700 may ship a different
-graphics stack, which the host's SDL2 and EGL bridge would need to support.
-Reports are welcome.
+With the PortMaster zip, muOS is expected to work: its system has the same
+Mali driver as Knulli and what else the port needs, checked from its image,
+but it has not been tested on a handheld yet. ROCKNIX is untested, and can
+use a different graphics driver (Panfrost). The host is built on glibc 2.31
+and links EGL and OpenGL ES by their usual names, so that it loads on
+firmware older than Knulli. Reports are welcome.
 
 ### Why not run the PC version with Box64 and Wine?
 

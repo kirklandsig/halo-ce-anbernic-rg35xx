@@ -23,8 +23,8 @@ and how it restores them.
 
 **[FAQ](FAQ.md)** answers the common questions: whether the handheld can
 run the game, the frame rates, the Xbox and PC versions, the legal position,
-PortMaster, other firmware and devices, and why the port does not use
-emulation.
+the PortMaster zip, other firmware (muOS, ROCKNIX) and devices, and why the
+port does not use emulation.
 
 **[Configuration](CONFIGURATION.md)** is the reference for every setting
 that matters on the handheld: each key of `config.toml` with its type,

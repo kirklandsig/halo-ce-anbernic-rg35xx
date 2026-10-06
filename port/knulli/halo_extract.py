@@ -119,7 +119,7 @@ def copy_maps(image_path, destination, progress):
         target = os.path.join(destination, "maps")
         # (a folder, not a link that would put the maps elsewhere)
         if os.path.islink(target):
-            raise Failure("The maps folder in roms/ports/halo is a link: remove it, then start Halo again.")
+            raise Failure("The maps folder in ports/halo is a link: remove it, then start Halo again.")
         os.makedirs(target, exist_ok=True)
 
         # the maps a copy of this image that was stopped finished (each is

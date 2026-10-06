@@ -240,8 +240,10 @@ Upstream's Android host is a JNI library started by SDL3's Java activity.
 Knulli has no Android runtime and no SDL3 with a Mali video driver, so this
 port keeps the Android host's loader, memory, thread and system-call code
 and replaces the rest with the files in `port/knulli/host/`, compiled with
-the aarch64 glibc cross compiler and linked against the device's
-`libSDL2-2.0.so.0` and `libmali.so.0`.
+the aarch64 glibc cross compiler, on Debian 11's glibc 2.31, and linked
+against the device's `libSDL2-2.0.so.0` and the usual EGL and OpenGL ES
+names (`libEGL.so.1`, `libGLESv2.so.2`, libglvnd's at the link; on Knulli
+and muOS they are, or load, Arm's `libmali.so.0`).
 
 ### Start-up
 
@@ -358,11 +360,26 @@ gamepad to the Xbox controller by position ([Install](INSTALL.md#controls)).
 folder. It extracts `maps/` from a disc image on the first start
 (`halo_extract.py`, which reads the Xbox file system with Python's standard
 library), writes the handheld's settings to `config.toml` if the file is
-missing, sets the controls, raises the clocks and holds the battery saver
-off, runs the game and restores the clocks. [Install](INSTALL.md) describes
-each step from the player's side.
+missing (a copy of `config.default.toml`), sets the controls, raises the
+clocks and holds the battery saver off, runs the game and restores the
+clocks. [Install](INSTALL.md) describes each step from the player's side.
+
+`port/knulli/portmaster/Halo.sh` is the same for PortMaster: its standard
+start (`control.txt`, `get_controls`), the same first-start steps and
+clocks, PortMaster's controller mapping, and gptokeyb2 (`halo.ini`, which
+maps no button) for the quit combination. The release's PortMaster zip
+holds it with the same game files, `port.json` and `gameinfo.xml`.
 
 ## The GL thread
+
+After each swap the GL thread also checks its health: every 60 frames it
+reads the driver's GL error flag and every 600 frames the memory the system
+has left (`/proc/meminfo`'s `MemAvailable`), and logs an error (out of
+memory named, as a texture or target the driver could not make is drawn
+empty) or memory under 48 MB, each the first few times. It found the end
+of frame's discard of depth and stencil naming the attachments of a
+framebuffer of the game's while the window's own was bound, on the first
+frame; the discard is now made only while one of the game's is bound.
 
 On the Cortex-A53, Arm's driver spends a large part of each frame in its
 own CPU work: validating state, building descriptors and job chains. In the

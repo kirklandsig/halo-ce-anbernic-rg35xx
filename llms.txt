@@ -6,20 +6,20 @@
 
 - Game: Halo: Combat Evolved, Xbox build 01.01.14.2342, decompiled to C by the upstream project https://github.com/cybersecurity/halo-ce-universal (pinned commit in UPSTREAM_COMMIT).
 - Hardware: Allwinner H700, 4x Cortex-A53 at 1.5 GHz, Mali-G31 MP2, 1 GB RAM, 640x480 screen on the RG35XX H.
-- Firmware: Knulli, release Gladiator II. Uses the firmware's SDL2 (2.30.12) and Arm's framebuffer Mali OpenGL ES driver. PortMaster is not needed.
+- Firmware: Knulli, release Gladiator II (the Knulli zip, no PortMaster needed), or PortMaster on Knulli or other firmware (the PortMaster zip). Uses the firmware's SDL2 and Arm's framebuffer Mali OpenGL ES driver. The host needs glibc 2.30 and SDL2 2.0.18 or newer.
 - Game data: the original Xbox version's maps are required (from a .iso disc image or an extracted maps folder). The PC version's files do not work.
 
 ## Devices
 
 - Tested: Anbernic RG35XX H.
 - Untested, expected to work: Anbernic RG35XX Plus, RG35XX SP, RG35XX 2024, RG40XX H, RG40XX V.
-- Untested: Anbernic RG CubeXX (720x720), RG34XX (720x480); muOS and ROCKNIX firmware.
+- Untested: Anbernic RG CubeXX (720x720), RG34XX (720x480). muOS: expected to work with the PortMaster zip, untested on a handheld. ROCKNIX: untested.
 - Not supported: TrimUI handhelds and other SoCs.
 
-## Frame rates (RG35XX H, last updated 2026-10-01)
+## Frame rates (RG35XX H, last updated 2026-10-06, release v2026.10.06)
 
-- Render scale 0.75 (default): main menu 60 fps; c10, 343 Guilty Spark, about 40 (31-44); b30, The Silent Cartographer beach battle, about 40 (35-44); a30, Halo level opening, about 55 (39-60).
-- Render scale 1.0 (640x480): main menu 60; c10 about 24; b30 about 30; a30 about 40.
+- Render scale 0.75 (default, dynamic resolution on): main menu 60 fps; c10, 343 Guilty Spark, about 57 (46-60); b30, The Silent Cartographer beach battle, about 43 (38-47); a30, Halo level opening, about 59 (39-60).
+- Render scale 1.0 (640x480): main menu 60; c10 about 56; b30 about 38; a30 about 40.
 
 ## Install
 
@@ -27,6 +27,7 @@
 2. Put your own Xbox Halo disc image (.iso) in roms/ports/halo/.
 3. Launch from Ports. The first launch copies maps/ out of the disc image with its progress on the screen (about four minutes), then the game sets up its cache (about a minute, black screen).
 4. Quit: hold the hotkey (MENU or SELECT) and press START. Settings: halo/config.toml (display.render_scale, default 0.75). Log: halo/log.txt.
+5. With PortMaster instead (Knulli or other firmware): put halo-ce-portmaster-<version>.zip in PortMaster's autoinstall folder, start PortMaster, then put the disc image in ports/halo/.
 
 ## Build
 

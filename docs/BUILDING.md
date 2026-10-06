@@ -32,7 +32,7 @@ published commit. To install the result on the handheld, see
 | Program | What it is | Compiled by |
 | --- | --- | --- |
 | `halo_guest.elf` | The game as a static ILP32 AArch64 image, built by upstream's Android build | clang 22 for the `arm64_32` target; linked by the NDK's `ld.lld` |
-| `halo` | The host: an aarch64 glibc executable for the handheld | `aarch64-linux-gnu-gcc`, linked against the handheld's SDL2 and Mali driver |
+| `halo` | The host: an aarch64 glibc executable for the handheld | `aarch64-linux-gnu-gcc`, on Debian 11's glibc 2.31, linked against the handheld's SDL2 and libglvnd's EGL and OpenGL ES |
 
 `build.sh` fetches the upstream decompilation at a pinned commit, applies
 this repository's patch, copies `port/knulli/` in, configures and builds,
@@ -48,8 +48,8 @@ The first build takes 10 to 30 minutes; later builds are incremental.
 
 - Linux on x86-64. The build was done on Ubuntu 24.04 under WSL 2; other
   recent distributions should work if they can install the same tools.
-- A network connection: the build clones upstream and downloads musl, SDL3
-  and the SDL2 headers.
+- A network connection: the build clones upstream and downloads musl, SDL3,
+  the SDL2 headers, and Debian 11's glibc 2.31 and libglvnd packages.
 - Under WSL, keep the repository in the Linux file system (for example under
   your home folder) rather than on a Windows drive mounted into WSL: the
   build creates many small files, and the Linux file system also keeps the
@@ -117,26 +117,44 @@ needs to be installed. Without a network connection, put the headers there
 yourself: `build.sh` downloads them only when `work/sdl2-include/SDL2/SDL.h`
 is missing.
 
-## The handheld's libraries
+## glibc 2.31 and libglvnd
 
-The host links against the handheld's own `libSDL2-2.0.so.0` and
-`libmali.so.0` (Arm's driver, which provides OpenGL ES and EGL). Copy them
-from the handheld's `/usr/lib` into a folder, for example `sysroot/`:
+The host is built against Debian 11's glibc 2.31 rather than the cross
+compiler's own (Ubuntu 24.04's, 2.39), so that it loads on firmware with an
+older C library than Knulli's. It links EGL and OpenGL ES by their usual
+names, `libEGL.so.1` and `libGLESv2.so.2`, against Debian 11's libglvnd,
+rather than by the Mali driver's name (`libmali.so.0`), which only some
+firmware has; on the handheld those names are the Mali driver or load it.
+Linking against libglvnd's standard functions also makes a call to one that
+is not standard fail at the link, not on a handheld (extensions are found
+through `eglGetProcAddress`).
+
+`port/knulli/glibc_sysroot.sh` downloads the packages (`libc6`, `libc6-dev`,
+`linux-libc-dev`, `libglvnd0`, `libegl1`, `libgles2`), checks them against
+the checksums in the script, and unpacks them into `work/glibc-2.31`, once.
+`port/knulli/build.sh` compiles with only that sysroot's headers
+(`-nostdinc`) and links against its libraries, and fails if the host needs
+a glibc newer than 2.31; its last line names the newest version the host
+needs (2.30).
+
+## The handheld's SDL2
+
+The host links against the handheld's own `libSDL2-2.0.so.0`. Copy it from
+the handheld's `/usr/lib` into a folder, for example `sysroot/`:
 
 ```sh
 mkdir -p sysroot
-scp 'root@<handheld>:/usr/lib/libSDL2-2.0.so.0*' 'root@<handheld>:/usr/lib/libmali.so.0*' sysroot/
+scp 'root@<handheld>:/usr/lib/libSDL2-2.0.so.0*' sysroot/
 # or, over USB:
 adb pull /usr/lib/libSDL2-2.0.so.0 sysroot/
-adb pull /usr/lib/libmali.so.0 sysroot/
 ```
 
-They are used only when linking: `port/knulli/build.sh` makes the link names
-`libSDL2.so` and `libmali.so` in `build/knulli/lib/` point at them and links
-with `--allow-shlib-undefined`, so their own dependencies need not be
-present. At run time the host uses the libraries on the handheld. They are
-Arm's and the firmware's files: never commit them (`sysroot/` is in
-`.gitignore`, and the [legal notice](LEGAL.md) explains why).
+It is used only when linking: `port/knulli/build.sh` makes the link name
+`libSDL2.so` in `build/knulli/lib/` point at it and links with
+`--allow-shlib-undefined`, so its own dependencies need not be present. At
+run time the host uses the library on the handheld (SDL2 2.0.18 or newer).
+It is the firmware's file: never commit it (`sysroot/` is in `.gitignore`,
+and the [legal notice](LEGAL.md) explains why).
 
 ## Running the build
 
@@ -149,7 +167,7 @@ ANDROID_NDK=$PWD/../android-ndk-r28c SYSROOT_LIB=$PWD/../sysroot ./build.sh
 | Variable | Default | Meaning |
 | --- | --- | --- |
 | `ANDROID_NDK` | (required) | The NDK r28c folder. |
-| `SYSROOT_LIB` | (required) | The folder with `libSDL2-2.0.so.0*` and `libmali.so.0*` from the handheld. |
+| `SYSROOT_LIB` | (required) | The folder with `libSDL2-2.0.so.0*` from the handheld. |
 | `GUEST_CC` | `clang-22` | A clang with the `arm64_32` target. |
 | `HOST_CC` | `aarch64-linux-gnu-gcc` | The aarch64 glibc cross compiler. |
 | `WORK` | `work/` beside `build.sh` | The working folder: the upstream tree and the SDL2 headers. |
@@ -160,9 +178,9 @@ ANDROID_NDK=$PWD/../android-ndk-r28c SYSROOT_LIB=$PWD/../sysroot ./build.sh
 ## What build.sh does
 
 **1. Checks the tools and inputs.** `git`, `python3`, `ninja`, `curl`, `tar`,
-`$HOST_CC` and `$GUEST_CC` must be on the `PATH`, `$GUEST_CC` must have the
-`aarch64_32` target, `ANDROID_NDK` must be an NDK, and `SYSROOT_LIB` must
-hold both libraries. Each failure stops the build with a message naming the
+`dpkg-deb`, `$HOST_CC` and `$GUEST_CC` must be on the `PATH`, `$GUEST_CC`
+must have the `aarch64_32` target, `ANDROID_NDK` must be an NDK, and
+`SYSROOT_LIB` must hold the handheld's SDL2. Each failure stops the build with a message naming the
 fix ([Common errors](#common-errors)).
 
 **2. Prepares the upstream tree** in `work/halo-ce-universal`:
@@ -185,7 +203,8 @@ fix ([Common errors](#common-errors)).
   the include path.
 
 **3. Gets the SDL2 headers** (`release-2.30.12`), if `work/sdl2-include`
-lacks them.
+lacks them, and glibc 2.31 and libglvnd into `work/glibc-2.31`
+(`glibc_sysroot.sh`, which does nothing when they are there already).
 
 **4. Configures upstream**, if `build.ninja` is missing or was made for
 another upstream commit (`work/configured.commit`):
@@ -204,18 +223,20 @@ same clang. At this step `configure.py` downloads musl 1.2.5 and clones SDL3
 the Android guest; without a network connection `configure.py` leaves it out.
 
 **5. Builds**, by running `port/knulli/build.sh` in the upstream tree with
-`SDL2_INCLUDE`, `SYSROOT_LIB`, `ANDROID_NDK`, `CC=$HOST_CC` and `JOBS`:
+`SDL2_INCLUDE`, `SYSROOT_LIB`, `ANDROID_NDK`, `GLIBC_SYSROOT`, `CC=$HOST_CC`
+and `JOBS`:
 
 1. `ninja build/android/halo_guest.elf build/android/host/host_import_table.c`
    builds the guest image and the host's import table (the host function
    for each import name).
 2. It links the NDK's `EGL`, `GLES2`, `GLES3` and `KHR` headers into
-   `build/knulli/gl_include/`, and the device's libraries as `libSDL2.so` and
-   `libmali.so` into `build/knulli/lib/`.
+   `build/knulli/gl_include/`, and the device's SDL2 as `libSDL2.so` into
+   `build/knulli/lib/`.
 3. It compiles the host with
    `-O2 -g -mcpu=cortex-a53 -fPIC -Wall -Wno-unused-function -D_GNU_SOURCE`
-   (and `-ffile-prefix-map`, so that the debug information names the tree
-   and the SDL2 headers by relative names):
+   (and `-ffile-prefix-map`, so that the debug information names the tree,
+   the SDL2 headers and the sysroot by relative names), against the glibc
+   2.31 sysroot's headers alone:
    upstream's Android host files `host_debug.c`, `host_gl.c`,
    `host_loader.c`, `host_memory.c`, `host_syscall.c` and `host_thread.c`;
    the Knulli files `host_main.c`, `host_sdl2.c`, `host_profile.c`,
@@ -227,12 +248,15 @@ the Android guest; without a network connection `configure.py` leaves it out.
    `port/knulli/glthread_gen.py` from `build/android/guest/gen/gl_imports.list`
    and the NDK's `GLES3/gl32.h`, replacing the old file only if the new one
    differs, and compiles it.
-5. It links `build/knulli/halo` with `-lSDL2 -lmali -lpthread -ldl -lm`
-   and copies `build/android/halo_guest.elf` beside it.
+5. It links `build/knulli/halo` against the sysroot's glibc with
+   `-lSDL2 -l:libGLESv2.so.2 -l:libEGL.so.1 -lpthread -ldl -lm`, copies
+   `build/android/halo_guest.elf` beside it, and checks the glibc version the
+   host needs (2.31 at most).
 
 **6. Copies the results** into `dist/`: `halo`, `halo_guest.elf`, `Halo.sh`,
 `halo_extract.py`, `halo_screen.py` and `sdl_mapping.py`, with mode 755, and
-lists them.
+`config.default.toml`, and lists them. (The PortMaster zip's own files are
+in `port/knulli/portmaster/`.)
 
 ## The output
 
@@ -243,7 +267,8 @@ dist/
 ├── Halo.sh           the launcher
 ├── halo_extract.py   the maps extractor
 ├── halo_screen.py    the launcher's messages and progress on the screen
-└── sdl_mapping.py    the controller mapping
+├── sdl_mapping.py    the controller mapping
+└── config.default.toml  the settings the first launch writes
 ```
 
 Copy them to the handheld as [Install](INSTALL.md) describes. For
@@ -290,11 +315,13 @@ downloads).
 | `clang-22 has no arm64_32 (aarch64_32) target; use clang 22 from apt.llvm.org` | The clang found lacks the target (some distribution builds). | Install clang 22 from apt.llvm.org, or set `GUEST_CC` to a clang that has it. |
 | `set ANDROID_NDK to the Android NDK r28c folder ...` | `ANDROID_NDK` is not set. | Set it for the command. |
 | `ANDROID_NDK=... is not an Android NDK (no toolchains/llvm/prebuilt/linux-x86_64)` | The path points at the wrong folder, often the zip's parent. | Point it at `android-ndk-r28c` itself. |
-| `set SYSROOT_LIB to a folder with libSDL2-2.0.so.0* and libmali.so.0* ...`, `no libmali.so.0* in SYSROOT_LIB=...` | The device's libraries are missing. | Copy both from the handheld's `/usr/lib` ([above](#the-handhelds-libraries)). |
+| `set SYSROOT_LIB to a folder with libSDL2-2.0.so.0* ...`, `no libSDL2-2.0.so.0* in SYSROOT_LIB=...` | The device's SDL2 is missing. | Copy it from the handheld's `/usr/lib` ([above](#the-handhelds-sdl2)). |
+| `glibc_sysroot.sh: ...: download failed or checksum mismatch` | A Debian package could not be downloaded, or it changed. | Check the connection; Debian's archive keeps old packages, and the script tries `archive.debian.org` too. |
+| `build.sh: the host needs GLIBC_2.xx, not glibc 2.31 or older` | The host was compiled against a newer glibc's headers. | Check that `GLIBC_SYSROOT` is set and that nothing adds the cross compiler's own include folder. |
 | `commit ... is not in https://github.com/cybersecurity/halo-ce-universal.git` | The pinned commit cannot be fetched (no network, or a mirror without it). | Check the connection or `UPSTREAM_URL`. |
 | `error: patch failed` from `git apply` | The patch does not apply to the pinned commit, usually after editing one of them by hand. | Regenerate the patch from a tree at the pinned commit ([Contributing](CONTRIBUTING-DEV.md)). |
 | `build.ninja has no Android guest build: delete .../build.ninja and check configure's output (it downloads musl and SDL3)` | `configure.py` could not download musl or clone SDL3 (it printed `Android build disabled: cannot fetch musl/SDL3`), or did not find the NDK. | Fix the network or the NDK path, delete `work/halo-ce-universal/build.ninja` and run `build.sh` again. |
 | `glthread_gen.py`: `<function>: pointer argument <name> has no rule` | A GL function the guest now imports has a pointer argument the GL thread does not know how to copy. | Add the function to `SYNC`, `PAYLOAD` or `OFFSETS` in `port/knulli/glthread_gen.py` ([Architecture](ARCHITECTURE.md#the-generated-recording-functions)). |
 | An `AssertionError` in `glthread_gen.py` | A new GL function returns a value but is not in `SYNC`. | Add it to `SYNC`. |
-| Link errors about SDL or GL symbols | The libraries in `SYSROOT_LIB` are not the device's, or the SDL2 headers differ from the device's version. | Copy the libraries from the handheld again; keep the headers at 2.30.12 for Knulli Gladiator II. |
+| Link errors about SDL or GL symbols | `SYSROOT_LIB` is not the device's SDL2, the SDL2 headers differ from its version, or the host calls a GL or EGL function that is not standard. | Copy SDL2 from the handheld again; keep the headers at 2.30.12 for Knulli Gladiator II; get an extension's functions through `eglGetProcAddress`. |
 | On the handheld: `cannot read the game image .../halo_guest.elf` | `halo_guest.elf` is not beside `halo`. | Copy both into `halo/`. |

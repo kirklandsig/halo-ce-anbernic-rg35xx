@@ -1,0 +1,33 @@
+{
+  "version": 4,
+  "name": "halo.zip",
+  "items": [
+    "Halo.sh",
+    "halo"
+  ],
+  "items_opt": [],
+  "attr": {
+    "title": "Halo: Combat Evolved",
+    "porter": [
+      "kirklandsig"
+    ],
+    "desc": "The Master Chief's first fight, on the Covenant's ringworld. A native port of the Xbox game's decompilation, with no emulation.",
+    "desc_md": "The Master Chief's first fight, on the Covenant's ringworld. A native port of the Xbox game's decompilation ([OpenCE](https://github.com/OpenCommunityEdition/OpenCE)), with no emulation. More at [halo-ce-anbernic-rg35xx](https://github.com/kirklandsig/halo-ce-anbernic-rg35xx).",
+    "inst": "Copy your disc image of Halo: Combat Evolved for the Xbox (an .iso file) into ports/halo. The first start copies the game's maps out of it, which takes a few minutes; the image can then be deleted. The PC version's files do not work.",
+    "inst_md": null,
+    "genres": [
+      "fps"
+    ],
+    "image": null,
+    "rtr": false,
+    "exp": false,
+    "runtime": [],
+    "store": [],
+    "availability": "full",
+    "reqs": [],
+    "arch": [
+      "aarch64"
+    ],
+    "min_glibc": "2.31"
+  }
+}

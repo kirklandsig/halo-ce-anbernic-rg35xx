@@ -1,7 +1,7 @@
 # Installing Halo CE on an H700 handheld
 
 This guide takes a player from a release of the port to a game running
-from Knulli's Ports menu: what hardware and game data you need, where each
+from the Ports menu, on Knulli or with PortMaster: what hardware and game data you need, where each
 file goes on the handheld, what happens at the first launch, how the
 controls are mapped and how to quit, where the logs, saves and settings
 live, and how to update or remove the game. It also describes exactly what
@@ -17,6 +17,7 @@ Xbox game.
 - [Supported handhelds](#supported-handhelds)
 - [The game data](#the-game-data)
 - [Copying the files](#copying-the-files)
+- [Installing with PortMaster](#installing-with-portmaster)
 - [The first launch](#the-first-launch)
 - [Playing](#playing)
 - [Controls](#controls)
@@ -29,23 +30,31 @@ Xbox game.
 
 ## What you need
 
-- An Allwinner H700 handheld running Knulli. The port was tested with the
-  release Gladiator II.
+- An Allwinner H700 handheld running Knulli (tested with the release
+  Gladiator II), or another firmware with PortMaster
+  ([Supported handhelds](#supported-handhelds)).
 - A disc image of the original Xbox version of Halo: Combat Evolved, made
   from your own disc, or the `maps/` folder of the Xbox game.
 - About 3 GB free: the extracted `maps/` folder (1.8 GB) and the cache the
   game sets up at its first start (0.8 GB), plus room for the disc image
   until the maps are copied.
-- `halo-ce-knulli-<version>.zip` from the [latest release](https://github.com/kirklandsig/halo-ce-anbernic-rg35xx/releases/latest), or
-  the six files a build produces in `dist/` ([Building](BUILDING.md)).
+- From the [latest release](https://github.com/kirklandsig/halo-ce-anbernic-rg35xx/releases/latest), one of:
+  - `halo-ce-knulli-<version>.zip`, for Knulli: a plain port, no PortMaster
+    needed;
+  - `halo-ce-portmaster-<version>.zip`, for PortMaster, on Knulli or another
+    firmware ([Installing with PortMaster](#installing-with-portmaster)).
 
-PortMaster is not needed. The port uses the firmware's own SDL2 and Mali
-driver.
+  Or the files a build produces in `dist/` ([Building](BUILDING.md)).
+
+Both use the firmware's own SDL2 and graphics driver, and none of
+PortMaster's runtimes. They hold the same game files and use the same
+`ports/halo/` folder, so maps, saves and settings carry over from one to the
+other.
 
 ## Supported handhelds
 
 The port needs an Allwinner H700 (4x Cortex-A53 at 1.5 GHz, Mali-G31 MP2,
-1 GB RAM) running Knulli.
+1 GB RAM).
 
 | Device | Screen | Status |
 | --- | --- | --- |
@@ -58,10 +67,17 @@ The port needs an Allwinner H700 (4x Cortex-A53 at 1.5 GHz, Mali-G31 MP2,
 | Anbernic RG CubeXX | 720x720 | Untested |
 | Anbernic RG34XX | 720x480 | Untested |
 
+| Firmware | How | Status |
+| --- | --- | --- |
+| Knulli (Gladiator II) | the Knulli zip | Tested |
+| Knulli (Gladiator II) | the PortMaster zip | Tested |
+| muOS | the PortMaster zip | Expected to work: its system has what the port needs (the same Mali driver as Knulli, SDL2 with the Mali video driver, glibc 2.38), checked from its 2601.1 image. Not yet tested on a handheld |
+| ArkOS and others with PortMaster | the PortMaster zip | Untested. The host needs glibc 2.30 or newer and SDL2 2.0.18 or newer |
+| ROCKNIX | the PortMaster zip | Untested. ROCKNIX can use the open Panfrost driver instead of Arm's, which the port has not been tested with |
+
 TrimUI handhelds and devices with other SoCs are not supported: they have
-different GPUs and drivers. Other firmware for the H700 (muOS, ROCKNIX) is
-untested. If you try another device or firmware, please open an issue with
-the result and your `halo/log.txt`.
+different GPUs and drivers. If you try another device or firmware, please
+open an issue with the result and your `halo/log.txt`.
 
 ## The game data
 
@@ -86,8 +102,9 @@ data and nothing is downloaded; see the [legal notice](LEGAL.md).
 
 ## Copying the files
 
-The release's zip holds the files in the layout the launcher expects, as
-Knulli sees the card:
+This section is for the Knulli zip; for the PortMaster zip, see
+[Installing with PortMaster](#installing-with-portmaster). The Knulli zip
+holds the files in the layout the launcher expects, as Knulli sees the card:
 
 ```
 /userdata/roms/ports/
@@ -98,6 +115,7 @@ Knulli sees the card:
     ├── halo_extract.py  copies maps/ out of the disc image
     ├── halo_screen.py   the launcher's messages and progress on the screen
     ├── sdl_mapping.py   the handheld's controls for SDL
+    ├── config.default.toml  the settings the first launch writes
     ├── LICENSE.txt, THIRD-PARTY-NOTICES.txt
     ├── PUT YOUR HALO DISC IMAGE HERE.txt
     └── Halo.iso         your disc image (any name ending in .iso or .xiso)
@@ -109,7 +127,7 @@ Knulli sees the card:
    folder to `roms/ports/halo/maps/`.
 
 From a build instead, copy `halo`, `halo_guest.elf`, `halo_extract.py`,
-`halo_screen.py` and `sdl_mapping.py` from `dist/` into
+`halo_screen.py`, `sdl_mapping.py` and `config.default.toml` from `dist/` into
 `/userdata/roms/ports/halo/` (make the folder), and `Halo.sh` into
 `/userdata/roms/ports/`.
 
@@ -117,6 +135,27 @@ Use whichever way you copy ROMs to the handheld: the card in a computer,
 Knulli's network share, or SCP/SFTP. Where the file system keeps Unix
 permissions, `Halo.sh` and `halo` must be executable (`chmod 755`); the zip
 and `build.sh` set that.
+
+## Installing with PortMaster
+
+The PortMaster zip is laid out as PortMaster's own ports are: `Halo.sh`
+(PortMaster's kind of launcher) and the `halo/` folder, with the same game
+files as the Knulli zip, the gptokeyb2 settings `halo.ini`, `port.json`,
+`gameinfo.xml` and a screenshot. It is not in PortMaster's catalogue; install
+it from the file:
+
+1. Put `halo-ce-portmaster-<version>.zip` in PortMaster's `autoinstall`
+   folder and start PortMaster, which installs it. (Over SSH,
+   `harbourmaster install <zip>` from PortMaster's folder does the same.)
+2. Copy your disc image into the `ports/halo/` folder PortMaster made, or an
+   extracted `maps/` folder to `ports/halo/maps/`.
+3. Start Halo from Ports.
+
+The launcher does what the Knulli one does at the first launch (the maps,
+the settings, the notice) and raises the clocks while the game runs; the
+controls come from PortMaster's controller database, and gptokeyb2 quits
+the game with the hotkey and START. Installing it over the Knulli zip, or
+the other way round, keeps `maps/`, `save/` and `config.toml`.
 
 ## The first launch
 
@@ -138,7 +177,8 @@ the game lists from EmulationStation's menu. The first launch:
    has a line `copying the maps folder out of <image>`, then one line per
    file with the percentage done before it and the file's name, and a last
    line `100% <count> files`;
-4. writes `halo/config.toml` with the settings for this handheld (below);
+4. writes `halo/config.toml` with the settings for this handheld (below),
+   copied from `config.default.toml`;
 5. sets up the controls;
 6. says on the screen that the game's own first start takes about a minute
    more (until a button is pressed, ten seconds at most);
@@ -249,7 +289,7 @@ game only; nothing is written to the firmware's configuration.
 
 The settings are in `halo/config.toml`. Edit it on the card or over the
 network while the game is not running; the game reads it at start-up. The
-launcher writes these values the first time:
+launcher writes these values the first time (from `config.default.toml`):
 
 ```toml
 [display]
@@ -277,8 +317,9 @@ launcher's values, delete `config.toml`; the next launch writes it again.
 ## Updating
 
 1. Unzip the new release's zip ([latest release](https://github.com/kirklandsig/halo-ce-anbernic-rg35xx/releases/latest)) over the old
-   files, replacing them; or, from a build, copy the six files as in
-   [Copying the files](#copying-the-files).
+   files, replacing them; or, from a build, copy the files as in
+   [Copying the files](#copying-the-files). With PortMaster, install the new
+   PortMaster zip the same way as the first.
 2. Keep `maps/`, `save/` and `config.toml`: the zip has none of them.
 
 Your `config.toml` is kept as it is. Settings that are new in a version are
@@ -325,7 +366,11 @@ Read `halo/log.txt` first; most problems name themselves there.
 | `Halo was stopped` (exit status 137) | The system killed the game, most likely when memory ran out. In `config.toml`, set `high_res_text = false` and `high_res_hud = false`, and unset `HALO_HIGH_RES_TEXT` and `HALO_HIGH_RES_HUD` if you set them (they override the file). |
 | `Halo stopped unexpectedly (exit status N)` | The game crashed or could not start; the details are in `log.txt`. |
 | The maps do not load | The PC version's files do not work. Use the Xbox version. |
-| The buttons are wrong | `sdl_mapping.py` builds the mapping from EmulationStation's controller configuration. Check that the handheld's controls are configured in EmulationStation. |
+| The buttons are wrong | `sdl_mapping.py` builds the mapping from EmulationStation's controller configuration. Check that the handheld's controls are configured in EmulationStation. With PortMaster, the mapping is PortMaster's for the handheld. |
+| Parts of the picture do not change, or the menu or another game shows through walls and floors | Another program is drawing to the screen while the game runs, often a frontend that did not stop cleanly. The frame rate drops too, and the render scale steps down at once. Restart the handheld (power it off and on) and start Halo again. |
+| `GL error 0x0505 by frame N: out of memory` | The graphics driver could not make a texture or a target, which is drawn empty. Close other programs, restart the handheld, and set `high_res_text = false` and `high_res_hud = false`. |
+| `memory low at frame N: M MB available` | The handheld is close to running out of memory; the game may be stopped (exit status 137). As above. |
+| Other `GL error 0x... by frame N` lines | A graphics call failed. Please open an issue with `log.txt`. |
 | Objects appear late the first time in a place | Each new shader combination is compiled once, beside the game, and cached in `save/shaders/`. |
 | The frame rate drops after a while | At 70 °C the kernel lowers the clocks. Lower `display.render_scale` for more headroom. |
 | The clocks stay high after a crash | The launcher restores them on exit; if it could not, the next start or a reboot does. |

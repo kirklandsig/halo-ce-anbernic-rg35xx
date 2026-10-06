@@ -139,10 +139,10 @@ The driver's per-draw cost is the largest single item. The ways to cut it:
   The other 640x480 H700 handhelds (RG35XX Plus, SP and 2024, RG40XX H and
   V) are expected to work. The RG CubeXX (720x720) and the RG34XX have other
   screen shapes, which `display.screen_width = 0` (the launcher's) fits.
-- Other firmware for the H700 (muOS, ROCKNIX) is untested. The host is
-  built against Knulli's SDL2 (2.30.12), whose video driver drives the Mali
-  framebuffer, and Arm's driver; firmware with another graphics stack would
-  need the host's SDL2 and EGL bridge to support it.
+- Other firmware: each release has a PortMaster zip, tested with
+  PortMaster on Knulli. muOS is expected to work (checked from its image)
+  but is untested on a handheld; ROCKNIX, whose Panfrost driver the port has
+  not met, is untested.
 
 Reports from other devices and firmware are welcome
 ([Contributing](../CONTRIBUTING.md)).

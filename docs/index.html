@@ -122,7 +122,7 @@
       "name": "Does it need PortMaster?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "No. It is a plain Knulli port: a launcher script in roms/ports and a folder. It uses the firmware's own SDL2 and Mali driver and none of PortMaster's runtimes."
+        "text": "Not on Knulli: the Knulli zip is a plain port, a launcher script in roms/ports and a folder. Each release also has a PortMaster zip, for PortMaster on Knulli or on other firmware (Install). Both use the firmware's own SDL2 and graphics driver and none of PortMaster's runtimes."
       }
     },
     {
@@ -130,7 +130,7 @@
       "name": "Does it work on muOS or ROCKNIX?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Untested. The host is built against Knulli's SDL2 (2.30.12) and Arm's framebuffer Mali driver. Other firmware for the H700 may ship a different graphics stack, which the host's SDL2 and EGL bridge would need to support. Reports are welcome."
+        "text": "With the PortMaster zip, muOS is expected to work: its system has the same Mali driver as Knulli and what else the port needs, checked from its image, but it has not been tested on a handheld yet. ROCKNIX is untested, and can use a different graphics driver (Panfrost). The host is built on glibc 2.31 and links EGL and OpenGL ES by their usual names, so that it loads on firmware older than Knulli. Reports are welcome."
       }
     },
     {
@@ -154,7 +154,7 @@
       "name": "Which other handhelds does it work on?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "It should work on the other Allwinner H700 handhelds that run Knulli: the Anbernic RG35XX Plus, SP and 2024, RG40XX H and V, RG CubeXX and RG34XX. Only the RG35XX H has been tested. TrimUI handhelds and other SoCs are not supported."
+        "text": "It should work on the other Allwinner H700 handhelds that run Knulli: the Anbernic RG35XX Plus, SP and 2024, RG40XX H and V, RG CubeXX and RG34XX. The RG35XX H is the one it is developed on, and a user reported the RG34XX SP working, its 3:2 screen filled with screen_width = 0 (#1). TrimUI handhelds and other SoCs are not supported."
       }
     }
   ]
@@ -178,7 +178,7 @@
     },
     {
       "@type": "HowToSupply",
-      "name": "The latest release's zip, halo-ce-knulli-<version>.zip (or the files built from this repository)"
+      "name": "The latest release's zip, halo-ce-knulli-<version>.zip or, for PortMaster, halo-ce-portmaster-<version>.zip (or the files built from this repository)"
     }
   ],
   "step": [
@@ -215,6 +215,13 @@
       "position": 5,
       "name": "Quit",
       "text": "To quit, hold the hotkey (MENU or SELECT) and press START.",
+      "url": "https://kirklandsig.github.io/halo-ce-anbernic-rg35xx/#install"
+    },
+    {
+      "@type": "HowToStep",
+      "position": 6,
+      "name": "Or install with PortMaster",
+      "text": "On Knulli or another firmware with PortMaster, put halo-ce-portmaster-<version>.zip from the latest release in PortMaster's autoinstall folder and start PortMaster; then put the disc image in ports/halo/ and start Halo from Ports.",
       "url": "https://kirklandsig.github.io/halo-ce-anbernic-rg35xx/#install"
     }
   ]
@@ -328,9 +335,9 @@ footer p { margin: 0 0 10px; }
     <!-- performance numbers: keep in step with the README's performance table -->
     <ul class="stats" aria-label="Frame rates at render scale 0.75">
       <li><strong>60 fps</strong><span>Main menu</span></li>
-      <li><strong>~40 fps</strong><span>343 Guilty Spark (c10)</span></li>
-      <li><strong>~40 fps</strong><span>The Silent Cartographer battle (b30)</span></li>
-      <li><strong>~55 fps</strong><span>Halo, level opening (a30)</span></li>
+      <li><strong>~57 fps</strong><span>343 Guilty Spark (c10)</span></li>
+      <li><strong>~43 fps</strong><span>The Silent Cartographer battle (b30)</span></li>
+      <li><strong>~59 fps</strong><span>Halo, level opening (a30)</span></li>
     </ul>
   </div>
 
@@ -362,25 +369,25 @@ footer p { margin: 0 0 10px; }
 
   <section id="performance" aria-labelledby="performance-title">
     <h2 id="performance-title">Performance</h2>
-    <p>Frames per second on an Anbernic RG35XX H, Knulli Gladiator II, stock thermal limits, with the level in the game&#39;s cache: the typical value and the range over the first minute of each level. Last updated 2026-10-01 (release v2026.10.01); the numbers are improving.</p>
+    <p>Frames per second on an Anbernic RG35XX H, Knulli Gladiator II, stock thermal limits, with the level in the game&#39;s cache: the typical value and the range over the first minute of each level. Dynamic resolution is on, as it is by default. Last updated 2026-10-06 (release v2026.10.06).</p>
     <!-- performance numbers: keep in step with the README's performance table -->
     <div class="table">
       <table>
         <thead><tr><th scope="col">Scene</th><th scope="col">Render scale 0.75 (default)</th><th scope="col">Render scale 1.0 (640x480)</th></tr></thead>
         <tbody>
           <tr><td>Main menu</td><td class="num">60</td><td class="num">60</td></tr>
-          <tr><td>c10, 343 Guilty Spark (swamp)</td><td class="num">about 40 (31–44)</td><td class="num">about 24 (19–28)</td></tr>
-          <tr><td>b30, The Silent Cartographer (beach battle)</td><td class="num">about 40 (35–44)</td><td class="num">about 30 (28–34)</td></tr>
-          <tr><td>a30, Halo (level opening)</td><td class="num">about 55 (39–60)</td><td class="num">about 40 (26–47)</td></tr>
+          <tr><td>c10, 343 Guilty Spark (swamp)</td><td class="num">about 57 (46–60)</td><td class="num">about 56 (23–60)</td></tr>
+          <tr><td>b30, The Silent Cartographer (beach battle)</td><td class="num">about 43 (38–47)</td><td class="num">about 38 (28–47)</td></tr>
+          <tr><td>a30, Halo (level opening)</td><td class="num">about 59 (39–60)</td><td class="num">about 40 (26–60)</td></tr>
         </tbody>
       </table>
     </div>
-    <p class="note">At 640x480 the GPU is the limit; at 0.75, the Mali driver's CPU time per draw call. The measurements behind each optimisation are in <a href="https://github.com/kirklandsig/halo-ce-anbernic-rg35xx/blob/main/docs/PERFORMANCE.md">PERFORMANCE.md</a>.</p>
+    <p class="note">At 0.75 the limits are the game's own thread and the Mali driver's CPU time per draw call; where the GPU is the limit, dynamic resolution lowers the render scale, down to 0.5, until it keeps up. The measurements behind each optimisation are in <a href="https://github.com/kirklandsig/halo-ce-anbernic-rg35xx/blob/main/docs/PERFORMANCE.md">PERFORMANCE.md</a>.</p>
   </section>
 
   <section id="devices" aria-labelledby="devices-title">
     <h2 id="devices-title">Supported devices</h2>
-    <p>The port needs an Allwinner H700 (4x Cortex-A53 at 1.5 GHz, Mali-G31 MP2, 1 GB RAM) running Knulli.</p>
+    <p>The port needs an Allwinner H700 (4x Cortex-A53 at 1.5 GHz, Mali-G31 MP2, 1 GB RAM), with Knulli or another firmware that has PortMaster.</p>
     <div class="table">
       <table>
         <thead><tr><th scope="col">Device</th><th scope="col">Screen</th><th scope="col">Status</th></tr></thead>
@@ -392,11 +399,12 @@ footer p { margin: 0 0 10px; }
           <tr><td>Anbernic RG40XX H</td><td>640x480</td><td>Untested, expected to work</td></tr>
           <tr><td>Anbernic RG40XX V</td><td>640x480</td><td>Untested, expected to work</td></tr>
           <tr><td>Anbernic RG CubeXX</td><td>720x720</td><td>Untested</td></tr>
-          <tr><td>Anbernic RG34XX</td><td>720x480</td><td>Untested</td></tr>
+          <tr><td>Anbernic RG34XX SP</td><td>720x480</td><td>Works, reported by a user</td></tr>
+          <tr><td>Anbernic RG34XX</td><td>720x480</td><td>Untested, expected to work</td></tr>
         </tbody>
       </table>
     </div>
-    <p class="note">TrimUI handhelds and devices with other SoCs are not supported. muOS and ROCKNIX are untested.</p>
+    <p class="note">Firmware: Knulli is tested, with the Knulli zip and with the PortMaster zip. muOS is expected to work with the PortMaster zip (checked from its image) but is untested on a handheld; ROCKNIX is untested. TrimUI handhelds and devices with other SoCs are not supported.</p>
   </section>
 
   <section id="install" aria-labelledby="install-title">
@@ -408,6 +416,7 @@ footer p { margin: 0 0 10px; }
       <li><strong>Add your disc image.</strong> Put your own Xbox disc image of Halo: Combat Evolved (<code>.iso</code>) in <code>roms/ports/halo/</code>.</li>
       <li><strong>Launch from Ports.</strong> Start Halo from the Ports list. The first launch copies the <code>maps/</code> folder out of the image with its progress on the screen (about four minutes), then the game sets up its cache (about a minute, with a black screen); the image can be deleted afterwards.</li>
       <li><strong>Quit.</strong> To quit, hold the hotkey (MENU or SELECT) and press START.</li>
+      <li><strong>Or install with PortMaster.</strong> On Knulli or another firmware with PortMaster, put <code>halo-ce-portmaster-&lt;version&gt;.zip</code> from the <a href="https://github.com/kirklandsig/halo-ce-anbernic-rg35xx/releases/latest">latest release</a> in PortMaster's <code>autoinstall</code> folder and start PortMaster; then put the disc image in <code>ports/halo/</code> and start Halo from Ports.</li>
     </ol>
     <p class="note">Settings are in <code>halo/config.toml</code> (for example <code>display.render_scale</code>, default 0.75), the log in <code>halo/log.txt</code>.</p>
   </section>
@@ -439,15 +448,15 @@ ls dist/           # halo  halo_guest.elf  Halo.sh  halo_extract.py  halo_screen
     <h3>Is this legal?</h3>
     <p>The repository contains only source code and documentation, and its releases only the port's programs built from that source: the upstream decompilation's authors released their code under CC0, and so does this port. Neither contains game files, disc images or maps. You need your own copy of the Xbox game. Whether decompilation projects are lawful depends on where you live; this is not legal advice. See the <a href="https://github.com/kirklandsig/halo-ce-anbernic-rg35xx/blob/main/docs/LEGAL.md">legal notice</a>.</p>
     <h3>Does it need PortMaster?</h3>
-    <p>No. It is a plain Knulli port: a launcher script in <code>roms/ports</code> and a folder. It uses the firmware's own SDL2 and Mali driver and none of PortMaster's runtimes.</p>
+    <p>Not on Knulli: the Knulli zip is a plain port, a launcher script in <code>roms/ports</code> and a folder. Each release also has a PortMaster zip, for PortMaster on Knulli or on other firmware (<a href="https://github.com/kirklandsig/halo-ce-anbernic-rg35xx/blob/main/docs/INSTALL.md#installing-with-portmaster">Install</a>). Both use the firmware's own SDL2 and graphics driver and none of PortMaster's runtimes.</p>
     <h3>Does it work on muOS or ROCKNIX?</h3>
-    <p>Untested. The host is built against Knulli's SDL2 (2.30.12) and Arm's framebuffer Mali driver. Other firmware for the H700 may ship a different graphics stack, which the host's SDL2 and EGL bridge would need to support. Reports are welcome.</p>
+    <p>With the PortMaster zip, muOS is expected to work: its system has the same Mali driver as Knulli and what else the port needs, checked from its image, but it has not been tested on a handheld yet. ROCKNIX is untested, and can use a different graphics driver (Panfrost). The host is built on glibc 2.31 and links EGL and OpenGL ES by their usual names, so that it loads on firmware older than Knulli. Reports are welcome.</p>
     <h3>Why not run the PC version with Box64 and Wine?</h3>
     <p>The PC version is a 32-bit x86 Windows program that draws with Direct3D 9. Running it on the H700 would need x86 translation, Wine, and a Direct3D to OpenGL ES translation layer, all on four Cortex-A53 cores and 1 GB of RAM. Each layer costs CPU time the device does not have. The native port runs the game's own logic as ARM64 code and draws with OpenGL ES directly.</p>
     <h3>Why not use xemu?</h3>
     <p>xemu emulates the whole original Xbox, its Pentium III CPU and its NV2A GPU, and needs a fast desktop CPU and a desktop OpenGL or Vulkan GPU. The H700's Cortex-A53 cores and its OpenGL ES-only Mali driver are far below that. A native port of the decompiled code avoids the emulation entirely.</p>
     <h3>Which other handhelds does it work on?</h3>
-    <p>It should work on the other Allwinner H700 handhelds that run Knulli: the Anbernic RG35XX Plus, SP and 2024, RG40XX H and V, RG CubeXX and RG34XX. Only the RG35XX H has been tested. TrimUI handhelds and other SoCs are not supported.</p>
+    <p>It should work on the other Allwinner H700 handhelds that run Knulli: the Anbernic RG35XX Plus, SP and 2024, RG40XX H and V, RG CubeXX and RG34XX. The RG35XX H is the one it is developed on, and a user reported the RG34XX SP working, its 3:2 screen filled with <code>screen_width = 0</code> (<a href="https://github.com/kirklandsig/halo-ce-anbernic-rg35xx/issues/1">#1</a>). TrimUI handhelds and other SoCs are not supported.</p>
   </section>
 
   <section id="legal" aria-labelledby="legal-title">

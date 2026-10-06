@@ -106,28 +106,14 @@ Press a button to go back."
 	supervised python3 halo_extract.py --screen "${images[0]}" "$GAMEDIR" || exit 1
 fi
 
-# the settings for this handheld, the first time (config.toml keeps them,
-# with the others' defaults, which the game writes): written whole, or no
-# start (the game would write its own defaults instead, for good); nor with
-# something else of that name, a folder say, in the way
+# the settings for this handheld, the first time (config.default.toml's;
+# config.toml keeps them, with the others' defaults, which the game writes):
+# written whole, or no start (the game would write its own defaults instead,
+# for good); nor with something else of that name, a folder say, in the way
 if [ ! -f config.toml ]; then
 	if [ -e config.toml ] || [ -L config.toml ] ||
-		! cat > config.toml.new <<'EOF' || ! mv -f config.toml.new config.toml; then
-[display]
-screen_width = 0
-render_scale = 0.75
-interpolation = true
-fast_shaders = true
-fast_textures = true
-high_res_hud = false
-high_res_text = false
-
-[update]
-auto = false
-
-[network]
-online = false
-EOF
+		! rm -rf config.toml.new || ! cp config.default.toml config.toml.new ||
+		! mv -f config.toml.new config.toml; then
 		rm -f config.toml.new
 		echo "cannot write config.toml"
 		supervised python3 halo_screen.py wait 60 "Halo could not start" "Halo could not write its settings, roms/ports/halo/config.toml: the SD card may be full, or a folder has that name.

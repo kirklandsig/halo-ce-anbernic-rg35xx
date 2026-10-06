@@ -34,16 +34,20 @@ lawful depends on where you live; this is not legal advice. See the
 
 ## Does it need PortMaster?
 
-No. It is a plain Knulli port: a launcher script in `roms/ports` and a
-folder. It uses the firmware's own SDL2 and Mali driver and none of
-PortMaster's runtimes.
+Not on Knulli: the Knulli zip is a plain port, a launcher script in
+`roms/ports` and a folder. Each release also has a PortMaster zip, for
+PortMaster on Knulli or on other firmware
+([Install](INSTALL.md#installing-with-portmaster)). Both use the firmware's
+own SDL2 and graphics driver and none of PortMaster's runtimes.
 
 ## Does it work on muOS or ROCKNIX?
 
-Untested. The host is built against Knulli's SDL2 (2.30.12) and Arm's
-framebuffer Mali driver. Other firmware for the H700 may ship a different
-graphics stack, which the host's SDL2 and EGL bridge would need to support.
-Reports are welcome.
+With the PortMaster zip, muOS is expected to work: its system has the same
+Mali driver as Knulli and what else the port needs, checked from its image,
+but it has not been tested on a handheld yet. ROCKNIX is untested, and can
+use a different graphics driver (Panfrost). The host is built on glibc 2.31
+and links EGL and OpenGL ES by their usual names, so that it loads on
+firmware older than Knulli. Reports are welcome.
 
 ## Why not run the PC version with Box64 and Wine?
 

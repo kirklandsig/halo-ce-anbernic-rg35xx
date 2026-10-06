@@ -28,16 +28,23 @@ cache `halo/save/`.
 The guest image is the Android build's (`ninja build/android/halo_guest.elf`,
 which needs the Android NDK and a clang with the `arm64_32` target). The host
 is built with the `aarch64-linux-gnu` cross compiler against the device's
-own SDL2 and libmali (copy `libSDL2-2.0.so.0*` and `libmali.so.0*` from the
-device's `/usr/lib`), with SDL2's headers:
+own SDL2 (copy `libSDL2-2.0.so.0*` from the device's `/usr/lib`), with SDL2's
+headers, and against glibc 2.31 and libglvnd's EGL and OpenGL ES, Debian
+11's, which `glibc_sysroot.sh` downloads and checks:
 
 ```
 python configure.py --release --android-ndk <ndk> --android-guest-cc clang-22
+sh port/knulli/glibc_sysroot.sh <glibc folder>
 SDL2_INCLUDE=<folder holding SDL2/SDL.h> SYSROOT_LIB=<the device's libraries> \
-ANDROID_NDK=<ndk> sh port/knulli/build.sh
+ANDROID_NDK=<ndk> GLIBC_SYSROOT=<glibc folder> sh port/knulli/build.sh
 ```
 
-The result is in `build/knulli`.
+The result is in `build/knulli`. Built on glibc 2.31 (the build's last line
+names the newest version the host needs, and fails past 2.31), and linked
+against EGL and OpenGL ES by their usual names (`libEGL.so.1`,
+`libGLESv2.so.2`) rather than the Mali driver's (`libmali.so.0`), the host
+also runs on the systems for these handhelds with an older C library than
+Knulli's (muOS, ArkOS). It needs SDL2 2.0.18 or newer.
 
 ## How the port operates
 

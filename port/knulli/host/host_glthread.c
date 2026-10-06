@@ -2478,6 +2478,51 @@ static const char *slow_name(int slot)
 	}
 }
 
+/* ---------- health
+
+What a log from another handheld should show when something runs out. GL
+errors are read every 60 frames (the driver keeps the first error's flag
+until it is read: only the codes of later ones go unseen, and errors from
+before host_gl.c maps a buffer, which drains the flag): out of memory above
+all, as a texture or a target the driver could not make is drawn empty,
+leaving holes in walls and floors. Memory left for the system
+(/proc/meminfo's MemAvailable, its third line) is read every 600 frames, and
+a low reading logged. Each is logged the first few times only. */
+#define HEALTH_LOW_MEMORY_KB (48 * 1024)
+
+static void health_check(uint32_t frame)
+{
+	static int errors_logged, low_logged, meminfo = -1;
+	GLenum error;
+
+	if (frame % 60 == 0 && errors_logged < 8 && (error = glGetError()) != GL_NO_ERROR)
+	{
+		errors_logged++;
+		host_logf(HOST_LOG_WARN, "GL error 0x%04x by frame %u%s", error, frame,
+			error == GL_OUT_OF_MEMORY ? ": out of memory, what was being made is drawn empty" : "");
+	}
+	if (frame % 600 == 0 && low_logged < 4)
+	{
+		char text[256];
+		const char *line;
+		long available;
+		ssize_t got;
+
+		if (meminfo < 0)
+			meminfo = open("/proc/meminfo", O_RDONLY | O_CLOEXEC);
+		got = meminfo >= 0 ? pread(meminfo, text, sizeof(text) - 1, 0) : -1;
+		if (got <= 0)
+			return;
+		text[got] = 0;
+		if ((line = strstr(text, "MemAvailable:")) && sscanf(line, "MemAvailable: %ld kB", &available) == 1 &&
+			available < HEALTH_LOW_MEMORY_KB)
+		{
+			low_logged++;
+			host_logf(HOST_LOG_WARN, "memory low at frame %u: %ld MB available", frame, available / 1024);
+		}
+	}
+}
+
 static void run_swap(const void *data)
 {
 	const struct swap_call *call = data;
@@ -2574,6 +2619,8 @@ static void run_swap(const void *data)
 	}
 	__atomic_add_fetch(&consumer.frames_done, 1, __ATOMIC_SEQ_CST);
 	futex_wake(&consumer.frames_done);
+	/* (after the game's thread is woken: nothing it waits for is in it) */
+	health_check(call->frame);
 }
 
 static void waits_add(struct waits *total, const struct waits *frame)

@@ -8,8 +8,8 @@
 #
 # Environment:
 #   ANDROID_NDK  the Android NDK r28c (the guest build, the GLES and EGL headers)
-#   SYSROOT_LIB  a folder with libSDL2-2.0.so.0* and libmali.so.0* copied from
-#                the handheld's /usr/lib (used to link only)
+#   SYSROOT_LIB  a folder with libSDL2-2.0.so.0* copied from the handheld's
+#                /usr/lib (used to link only)
 #   GUEST_CC     a clang with the arm64_32 target (default: clang-22)
 #   HOST_CC      the aarch64 glibc cross compiler (default: aarch64-linux-gnu-gcc)
 #   WORK         the working folder (default: work/ next to this script)
@@ -41,8 +41,9 @@ need() {
 need git "install git"
 need python3 "install python3"
 need ninja "install ninja-build"
-need curl "install curl (the build downloads musl and the SDL2 headers)"
+need curl "install curl (the build downloads musl, the SDL2 headers and glibc 2.31)"
 need tar "install tar"
+need dpkg-deb "install dpkg (it unpacks Debian 11's glibc 2.31, which the host is built against)"
 need "$HOST_CC" "install gcc-aarch64-linux-gnu, or set HOST_CC"
 need "$GUEST_CC" "install clang-22 from apt.llvm.org, or set GUEST_CC to a clang with the arm64_32 target"
 "$GUEST_CC" -print-targets 2> /dev/null | grep -q aarch64_32 ||
@@ -55,13 +56,11 @@ need "$GUEST_CC" "install clang-22 from apt.llvm.org, or set GUEST_CC to a clang
 ANDROID_NDK=$(cd "$ANDROID_NDK" && pwd)
 
 [ -n "${SYSROOT_LIB:-}" ] ||
-	die "set SYSROOT_LIB to a folder with libSDL2-2.0.so.0* and libmali.so.0* copied from the handheld's /usr/lib"
+	die "set SYSROOT_LIB to a folder with libSDL2-2.0.so.0* copied from the handheld's /usr/lib"
 [ -d "$SYSROOT_LIB" ] || die "SYSROOT_LIB=$SYSROOT_LIB is not a folder"
 SYSROOT_LIB=$(cd "$SYSROOT_LIB" && pwd)
-for library in libSDL2-2.0.so.0 libmali.so.0; do
-	compgen -G "$SYSROOT_LIB/$library*" > /dev/null ||
-		die "no $library* in SYSROOT_LIB=$SYSROOT_LIB (copy it from the handheld's /usr/lib)"
-done
+compgen -G "$SYSROOT_LIB/libSDL2-2.0.so.0*" > /dev/null ||
+	die "no libSDL2-2.0.so.0* in SYSROOT_LIB=$SYSROOT_LIB (copy it from the handheld's /usr/lib)"
 
 WORK=${WORK:-$HERE/work}
 DIST=${DIST:-$HERE/dist}
@@ -136,6 +135,13 @@ if [ ! -f "$SDL2_INCLUDE/SDL2/SDL.h" ]; then
 	mv "$SDL2_INCLUDE.tmp" "$SDL2_INCLUDE/SDL2"
 fi
 
+# ---------- glibc 2.31 and libglvnd, Debian 11's, which the host is built
+# against (so that it runs on the older systems for these handhelds as well as
+# on Knulli); downloaded once, again only when the packages change
+
+GLIBC_SYSROOT=$WORK/glibc-2.31
+sh "$SRC/port/knulli/glibc_sysroot.sh" "$GLIBC_SYSROOT"
+
 # ---------- build
 
 cd "$SRC"
@@ -150,12 +156,13 @@ grep -q 'halo_guest\.elf' build.ninja ||
 	die "build.ninja has no Android guest build: delete $SRC/build.ninja and check configure's output (it downloads musl and SDL3)"
 
 echo "== building (this takes a while the first time)"
-SDL2_INCLUDE=$SDL2_INCLUDE SYSROOT_LIB=$SYSROOT_LIB ANDROID_NDK=$ANDROID_NDK CC=$HOST_CC JOBS=$JOBS \
-	sh port/knulli/build.sh
+SDL2_INCLUDE=$SDL2_INCLUDE SYSROOT_LIB=$SYSROOT_LIB ANDROID_NDK=$ANDROID_NDK GLIBC_SYSROOT=$GLIBC_SYSROOT \
+	CC=$HOST_CC JOBS=$JOBS sh port/knulli/build.sh
 
 # ---------- dist: what goes on the handheld
 
 install -m 755 build/knulli/halo build/knulli/halo_guest.elf port/knulli/Halo.sh port/knulli/halo_extract.py \
 	port/knulli/halo_screen.py port/knulli/sdl_mapping.py "$DIST/"
+install -m 644 port/knulli/config.default.toml "$DIST/"
 echo "== done: $DIST"
 ls -l "$DIST"

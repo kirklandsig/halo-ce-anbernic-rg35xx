@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<gameList>
+  <game>
+    <path>./Halo.sh</path>
+    <name>Halo: Combat Evolved</name>
+    <desc>The Master Chief wakes on the Pillar of Autumn and fights the Covenant and the Flood across Halo, a ringworld with a secret. The campaign of the original Xbox game, running natively from its decompilation, with no emulation. Needs your own Xbox disc image.</desc>
+    <releasedate>20011115T000000</releasedate>
+    <developer>Bungie</developer>
+    <publisher>Microsoft Game Studios</publisher>
+    <genre>FPS</genre>
+    <image>./halo/screenshot.png</image>
+  </game>
+</gameList>

@@ -469,6 +469,30 @@ game held about 100 MB more memory; the launcher writes it off
 ([Configuration](CONFIGURATION.md#displayhigh_res_text)). The game image is
 2.3 MB larger with the fonts and titles embedded.
 
+## Upstream's game logic for many enemies (2026-10-06)
+
+Upstream's commit 197c1994 sped up its many-enemy co-op games (484 actors,
+53 to about 97 fps on a PC). Its game-logic half is taken: cluster lists
+that remove a reference where it was put instead of searching for it,
+object lighting that keeps each cluster's lights, a data array that stops
+walking a full table for every new entry, and a texture timer that runs
+only while something reads it. Its renderer half, partly for Mesa's GL
+thread, and its companions for co-op's larger actor pool are not.
+
+On the RG35XX H, release v2026.10.02.1 against this build, 120 s each with
+EmulationStation stopped, render scale 0.75, cooled to 55 C first:
+
+| Scene, last 50 s | v2026.10.02.1 | v2026.10.06 |
+| --- | --- | --- |
+| a30 | 55.0 | 56.4 |
+| b30 battle, run 1 | 42.2 | 43.0 |
+| b30 battle, run 2 | 41.9 | 43.9 |
+
+About 3% in the battle, which has far fewer actors than upstream's test;
+memory is the same. Benchmarks need EmulationStation stopped:
+with it idle in the background, its frames go to the screen between the
+game's, every run is held at 30 fps, and the menu shows through the game.
+
 ## Where the threads' frames go (2026-10-02)
 
 **Not the GPU, in a30 and the b30 battle.** The plan was dynamic resolution:
