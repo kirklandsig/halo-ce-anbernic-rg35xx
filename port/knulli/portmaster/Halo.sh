@@ -53,6 +53,13 @@ Press a button to go back."
   fi
 fi
 
+# Internet play on, once, for an install whose settings had it off before
+# co-op and the server browser; the player's choice after that stays.
+if [ ! -e save/online-on ]; then
+  sed -i '/^[[:space:]]*\[network\]/,/^[[:space:]]*\[/ s/^\([[:space:]]*online[[:space:]]*=[[:space:]]*\)false/\1true/' config.toml &&
+    mkdir -p save && : > save/online-on
+fi
+
 # The first start sets up the game's cache with a black screen for about a minute.
 if [ ! -d save/z ]; then
   python3 halo_screen.py wait 10 "Starting Halo" "The first start takes about a minute more, with a black screen, while the game sets up its cache. Later starts are quick.

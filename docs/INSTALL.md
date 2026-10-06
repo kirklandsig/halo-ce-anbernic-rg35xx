@@ -23,6 +23,7 @@ Xbox game.
 - [Controls](#controls)
 - [Where things are](#where-things-are)
 - [What the launcher changes on the handheld](#what-the-launcher-changes-on-the-handheld)
+- [Playing online](#playing-online)
 - [Changing settings](#changing-settings)
 - [Updating](#updating)
 - [Uninstalling](#uninstalling)
@@ -116,6 +117,7 @@ holds the files in the layout the launcher expects, as Knulli sees the card:
     ├── halo_screen.py   the launcher's messages and progress on the screen
     ├── sdl_mapping.py   the handheld's controls for SDL
     ├── config.default.toml  the settings the first launch writes
+    ├── brokers.txt      internet play's signalling brokers
     ├── LICENSE.txt, THIRD-PARTY-NOTICES.txt
     ├── PUT YOUR HALO DISC IMAGE HERE.txt
     └── Halo.iso         your disc image (any name ending in .iso or .xiso)
@@ -285,6 +287,38 @@ second. Long sessions reach that temperature.
 The launcher also exports `SDL_GAMECONTROLLERCONFIG` (the controls) for the
 game only; nothing is written to the firmware's configuration.
 
+## Playing online
+
+The port has upstream's online play
+([OpenCE](https://github.com/OpenCommunityEdition/OpenCE)): the campaign in
+co-op and multiplayer games, over the internet or the local network (system
+link), with the PC version's menus. The handheld needs a network
+connection (Wi-Fi) for it.
+
+- **Join a game:** Multiplayer, Join Game, Server Browser. It lists the
+  public games of everyone playing a build of the same upstream commit,
+  upstream's own or this port.
+- **Host a game:** Multiplayer, Create Game, Internet (or System Link for
+  the local network). A SINGLEPLAYER map is online co-op through the
+  campaign; a multiplayer map is a multiplayer game. Server Setup sets whether the game is PUBLIC (in the
+  server browser) or PRIVATE, friendly fire, and co-op's extra enemies. A
+  co-op game starts PRIVATE; set it to PUBLIC so that others can find it.
+- **Invite links:** a host's game also has an invite link, which the log
+  (`halo/log.txt`) shows. On a PC, opening the link joins; the handheld has
+  no way to paste one, so join through the server browser instead.
+
+Internet play is on (`network.online = true`). It connects to anything only
+while you host, join or have the server browser open: through public MQTT
+brokers (`halo/brokers.txt`) the machines of a game find each other, and
+public STUN servers tell each its internet address. To turn it off, set
+`online = false` in `[network]` of `config.toml`, or use the Settings menu.
+Updating from a version before co-op turns it on once; after that your
+choice is kept.
+
+Every machine in a game has to run the same network version: play with
+people on a build of the same upstream commit (this release:
+`UPSTREAM_COMMIT`).
+
 ## Changing settings
 
 The settings are in `halo/config.toml`. Edit it on the card or over the
@@ -305,7 +339,7 @@ high_res_text = false
 auto = false
 
 [network]
-online = false
+online = true
 ```
 
 The one most worth changing is `display.render_scale`: the 3D picture's
@@ -321,6 +355,13 @@ launcher's values, delete `config.toml`; the next launch writes it again.
    [Copying the files](#copying-the-files). With PortMaster, install the new
    PortMaster zip the same way as the first.
 2. Keep `maps/`, `save/` and `config.toml`: the zip has none of them.
+
+**From a version before v2026.10.06.1 (co-op):** a checkpoint saved in the
+middle of a level by the older version does not load (upstream's larger
+game state changed the saved game's layout): the game refuses it, and the
+level starts from its beginning. Profiles and the levels you reached are
+kept. The shader programs are compiled again once (objects appear late the
+first time in each place), and internet play is turned on once.
 
 Your `config.toml` is kept as it is. Settings that are new in a version are
 added to it at their defaults at the first start, and the log says so
@@ -373,5 +414,8 @@ Read `halo/log.txt` first; most problems name themselves there.
 | Other `GL error 0x... by frame N` lines | A graphics call failed. Please open an issue with `log.txt`. |
 | Objects appear late the first time in a place | Each new shader combination is compiled once, beside the game, and cached in `save/shaders/`. |
 | The frame rate drops after a while | At 70 °C the kernel lowers the clocks. Lower `display.render_scale` for more headroom. |
+| `Internet play: no signalling brokers (network.brokers_file), so invites cannot work` | `halo/brokers.txt` is missing: copy it from the release again. |
+| The server browser is empty | Check the handheld's Wi-Fi, and that `online = true` in `[network]` of `config.toml`. Only PUBLIC games are listed. |
+| An old checkpoint does not load after updating | Checkpoints from before v2026.10.06.1 cannot load in it; start the level again. |
 | The clocks stay high after a crash | The launcher restores them on exit; if it could not, the next start or a reboot does. |
 | Something else | Open an issue with `halo/log.txt`, the device, the Knulli release, and whether you installed from a disc image or a `maps/` folder. |

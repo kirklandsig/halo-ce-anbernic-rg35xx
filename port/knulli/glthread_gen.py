@@ -39,7 +39,7 @@ SYNC = {
     "glGenVertexArrays", "glCreateShader", "glGetShaderiv", "glGetShaderInfoLog",
     "glGetProgramiv", "glGetProgramInfoLog", "glGetUniformLocation", "glGenQueries",
     "glGetQueryObjectuiv", "glShaderSource", "glBindAttribLocation", "glCompileShader", "glLinkProgram",
-    "glProgramBinary", "glGetProgramBinary",
+    "glProgramBinary", "glGetProgramBinary", "glGenRenderbuffers",
 }
 # names reserved ahead of time (host_glthread.c)
 RESERVED = {"glGenTextures": "textures", "glGenBuffers": "buffers", "glGenFramebuffers": "framebuffers",

@@ -40,7 +40,7 @@ fast_textures = true
 auto = false
 
 [network]
-online = false
+online = true
 ```
 
 When the game starts, it reads the file once (`config_load`). Every
@@ -565,20 +565,28 @@ The host opens SDL2's audio device with a buffer of 1024 sample frames;
 
 ## Network and updates
 
-The launcher turns off internet play and the updater. The network settings
-are upstream's; this port has not changed them.
+The launcher turns off upstream's updater and leaves internet play on, as
+upstream has it (updating from a version before co-op turns it on once). The
+network settings are upstream's; the PC menus' Server Setup and Settings
+write several of them. [Install: playing online](INSTALL.md#playing-online)
+describes playing.
 
 | Setting | Type | Default | Launcher | Variable | Effect |
 | --- | --- | --- | --- | --- | --- |
-| `network.online` | boolean | `true` | `false` | `HALO_NET_ONLINE` | Internet play through invite links. Off keeps system link to the local network. |
+| `network.online` | boolean | `true` | `true` | `HALO_NET_ONLINE` | Internet play: hosting makes an invite link and, if public, a server browser listing; off keeps system link to the local network. Connects only while hosting, joining or browsing. |
 | `update.auto` | boolean | `true` | `false` | `HALO_UPDATE_AUTO` | Upstream's updater, which looks for a new version of upstream's builds, not of this port. Keep it off. |
+| `network.public_lobby` | boolean | `true` | | `HALO_NET_PUBLIC_LOBBY` | The server browser: list this machine's public games and show others'. |
+| `network.host_public` | boolean | `true` | | `HALO_NET_HOST_PUBLIC` | Whether a new internet multiplayer game starts PUBLIC. |
+| `network.coop_public` | boolean | `false` | | `HALO_NET_COOP_PUBLIC` | Whether a new online co-op game starts PUBLIC. |
+| `network.coop_friendly_fire` | string | `"on"` | | `HALO_NET_COOP_FRIENDLY_FIRE` | `"off"`, `"on"`, `"shields_only"` or `"explosives_only"`. |
+| `network.coop_player_collisions` | boolean | `true` | | `HALO_NET_COOP_PLAYER_COLLISIONS` | Whether co-op's players bump into each other. |
+| `network.coop_enemies_mode`, `network.coop_enemies`, `network.coop_enemies_multiplier` | | `"per_player"`, `50`, `2` | | | Co-op's extra enemies: none, a percentage more for each player past the first, or a fixed multiplier. |
 | `network.address` | string | `""` | | `HALO_NET_ADDRESS` | This machine's IPv4 address for system link; empty chooses one. |
 | `network.broadcast` | string | `""` | | `HALO_NET_BROADCAST` | Comma-separated IPv4 addresses system link announces to, instead of the local network's broadcast address. |
-| `network.netcode` | string | `"distributed"` | | `HALO_NETCODE` | `"distributed"` or `"lockstep"`; the host's choice is played. |
 | `network.join_from_clipboard` | boolean | `true` | | `HALO_NET_JOIN_FROM_CLIPBOARD` | Join the game of an invite link found on the clipboard. On the handheld the clipboard is the process's own. |
 | `network.tunnel_port` | integer | `0` | | `HALO_NET_TUNNEL_PORT` | The UDP port of internet play; 0 picks one. |
 | `network.allow_upnp` | boolean | `true` | | `HALO_NET_ALLOW_UPNP` | Let internet play ask the router to forward its port. |
-| `network.signalling_brokers` | string | three public MQTT brokers | | `HALO_NET_BROKERS` | Where the machines of an invite find each other. |
+| `network.brokers_file` | string | `"brokers.txt"` | | `HALO_NET_BROKERS_FILE` | The public MQTT brokers through which the machines of a game find each other, beside `config.toml`. |
 | `network.stun_servers` | string | two public STUN servers | | `HALO_NET_STUN` | Servers that tell the machine its internet address. |
 
 ## Diagnostics

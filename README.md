@@ -59,6 +59,9 @@ Captured on an Anbernic RG35XX H (640x480 screen).
 - First launch extracts `maps/` from your Xbox disc image on the handheld.
 - The handheld's own controls, read from EmulationStation's configuration.
 - Quit with the hotkey: hold MENU (or SELECT) and press START.
+- Upstream's online play: the campaign in co-op and multiplayer, over the
+  internet (a server browser of public games) or the local network, with
+  the PC version's menus ([Install: playing online](docs/INSTALL.md#playing-online)).
 
 ## Performance
 
@@ -172,6 +175,7 @@ The resulting layout:
     ├── halo_screen.py
     ├── sdl_mapping.py
     ├── config.default.toml
+    ├── brokers.txt      internet play's signalling brokers
     ├── config.toml      written at the first launch
     ├── log.txt          the log of the last launch
     ├── maps/            extracted from your disc image

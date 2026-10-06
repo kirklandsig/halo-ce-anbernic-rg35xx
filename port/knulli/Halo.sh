@@ -123,6 +123,14 @@ Press a button to go back."
 	fi
 fi
 
+# internet play on, once for an install whose settings the launcher wrote
+# with it off (before co-op and the server browser); the player's choice
+# after that stays (save/online-on records that it was done)
+if [ ! -e save/online-on ]; then
+	sed -i '/^[[:space:]]*\[network\]/,/^[[:space:]]*\[/ s/^\([[:space:]]*online[[:space:]]*=[[:space:]]*\)false/\1true/' config.toml &&
+		mkdir -p save && : > save/online-on
+fi
+
 # the handheld's own controls (SDL2 would take them for another pad)
 SDL_GAMECONTROLLERCONFIG="$(python3 sdl_mapping.py)"
 export SDL_GAMECONTROLLERCONFIG

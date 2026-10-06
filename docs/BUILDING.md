@@ -255,7 +255,8 @@ and `JOBS`:
 
 **6. Copies the results** into `dist/`: `halo`, `halo_guest.elf`, `Halo.sh`,
 `halo_extract.py`, `halo_screen.py` and `sdl_mapping.py`, with mode 755, and
-`config.default.toml`, and lists them. (The PortMaster zip's own files are
+`config.default.toml` and upstream's `brokers.txt` (internet play's
+signalling brokers), and lists them. (The PortMaster zip's own files are
 in `port/knulli/portmaster/`.)
 
 ## The output
@@ -268,7 +269,8 @@ dist/
 ├── halo_extract.py   the maps extractor
 ├── halo_screen.py    the launcher's messages and progress on the screen
 ├── sdl_mapping.py    the controller mapping
-└── config.default.toml  the settings the first launch writes
+├── config.default.toml  the settings the first launch writes
+└── brokers.txt       internet play's signalling brokers
 ```
 
 Copy them to the handheld as [Install](INSTALL.md) describes. For

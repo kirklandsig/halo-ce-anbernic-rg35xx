@@ -11,4 +11,4 @@ high_res_text = false
 auto = false
 
 [network]
-online = false
+online = true

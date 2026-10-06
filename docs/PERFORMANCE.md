@@ -469,6 +469,35 @@ game held about 100 MB more memory; the launcher writes it off
 ([Configuration](CONFIGURATION.md#displayhigh_res_text)). The game image is
 2.3 MB larger with the fonts and titles embedded.
 
+## Upstream at 76addf66: co-op, the PC menus (2026-10-06)
+
+The port merged upstream's online co-op, server browser and PC menus, its
+per-pixel lighting and anti-aliasing (both off by default, and not used by
+the port's draws on the handheld), 64-bit vertex constant serials (the
+32-bit ones wrapped within minutes to an hour at a high frame rate, after
+which a program could draw with another object's matrices for a frame), and
+its new audio (a windowed-sinc resampler and I3DL2 reverb). The game image
+is 17.2 MB (10.8 before), and the game holds about 40 MB more: 268 MB at
+the PC main menu, 425 to 435 MB in the b30 battle.
+
+On the RG35XX H, 120 s, EmulationStation stopped (and so no sound),
+render scale 0.75, the second run of each:
+
+| Scene, last 50 s | v2026.10.06 | v2026.10.06.1 |
+| --- | --- | --- |
+| a30 | 56.4 | 57.8 |
+| b30 battle | 43.0 / 43.9 | 43.9 |
+
+Launched from EmulationStation with sound, a30's last 50 s: v2026.10.06
+53.7 fps; v2026.10.06.1 52.5 with the reverb on (the default) and 53.3 with
+it off (`audio.reverb = false`).
+
+The first merge left upstream's per-pixel lights uploaded at every draw to
+uniform location 0 of the programs the host builds (whose record had no
+location for them): GL_INVALID_OPERATION at every draw and a30 held at 50
+fps, until the location was marked absent. The GL thread's health check
+([Architecture](ARCHITECTURE.md#the-gl-thread)) showed the error; a trace of each command's error found the call.
+
 ## Upstream's game logic for many enemies (2026-10-06)
 
 Upstream's commit 197c1994 sped up its many-enemy co-op games (484 actors,

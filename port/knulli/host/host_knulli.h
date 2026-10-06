@@ -27,7 +27,7 @@ struct host_event
 	int kind;
 	uint64_t timestamp_ns;
 	uint32_t which;         /* joystick instance (gamepads), keyboard (keys) */
-	int32_t scancode;       /* the same values in SDL2 and SDL3 */
+	int32_t scancode;       /* SDL3's: SDL2's up to SDL_SCANCODE_MODE, others unknown */
 	int32_t keycode;
 	uint16_t modifiers;
 	uint8_t down;

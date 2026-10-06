@@ -163,6 +163,6 @@ SDL2_INCLUDE=$SDL2_INCLUDE SYSROOT_LIB=$SYSROOT_LIB ANDROID_NDK=$ANDROID_NDK GLI
 
 install -m 755 build/knulli/halo build/knulli/halo_guest.elf port/knulli/Halo.sh port/knulli/halo_extract.py \
 	port/knulli/halo_screen.py port/knulli/sdl_mapping.py "$DIST/"
-install -m 644 port/knulli/config.default.toml "$DIST/"
+install -m 644 port/knulli/config.default.toml port/assets/network/brokers.txt "$DIST/"
 echo "== done: $DIST"
 ls -l "$DIST"

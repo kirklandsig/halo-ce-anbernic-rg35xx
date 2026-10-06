@@ -139,6 +139,24 @@ void host_sdl_get_error(char *buffer, uint32_t size)
 	SDL_strlcpy(buffer, SDL_GetError(), size);
 }
 
+/* SDL2's scancodes as SDL3's: the same up to SDL_SCANCODE_MODE (257, the
+keyboard's usages); past it the two number media and system keys apart
+(Codex M27), which are left unknown here rather than misnamed */
+static int32_t scancode_sdl3(int32_t scancode)
+{
+	return scancode >= 0 && scancode <= SDL_SCANCODE_MODE ? scancode : SDL_SCANCODE_UNKNOWN;
+}
+
+void host_sdl_scancode_name(int32_t scancode, char *buffer, uint32_t size)
+{
+	SDL_strlcpy(buffer, SDL_GetScancodeName((SDL_Scancode)scancode_sdl3(scancode)), size);
+}
+
+int32_t host_sdl_scancode_from_name(const char *name)
+{
+	return scancode_sdl3((int32_t)SDL_GetScancodeFromName(name));
+}
+
 int64_t host_sdl_ticks(void)
 {
 	return (int64_t)SDL_GetTicks64();
@@ -412,7 +430,7 @@ static int translate(const SDL_Event *event, struct host_event *result)
 	case SDL_KEYDOWN:
 	case SDL_KEYUP:
 		result->kind = _host_event_key;
-		result->scancode = event->key.keysym.scancode;
+		result->scancode = scancode_sdl3((int32_t)event->key.keysym.scancode);
 		result->keycode = event->key.keysym.sym;
 		result->modifiers = event->key.keysym.mod;
 		result->down = event->type == SDL_KEYDOWN;
