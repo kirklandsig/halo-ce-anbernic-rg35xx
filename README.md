@@ -2,7 +2,8 @@
 
 Yes — Halo CE runs natively on the Anbernic RG35XX H (RG35XXH) under Knulli:
 60 fps in the menus and about 40 to 55 fps in campaign levels at the default
-render scale. This repository is a native ARM64 (AArch64) port of the Halo:
+render scale, and it plays online (co-op and multiplayer, with PCs and other
+handhelds). This repository is a native ARM64 (AArch64) port of the Halo:
 Combat Evolved decompilation, [halo-ce-universal](https://github.com/cybersecurity/halo-ce-universal),
 to the Allwinner H700 and its Mali-G31 GPU. There is no emulation: no xemu,
 no Box64, no Wine. You need your own copy of the original Xbox game. This
@@ -41,6 +42,8 @@ Captured on an Anbernic RG35XX H (640x480 screen).
 | Main menu | The Silent Cartographer (b30), render scale 0.75 |
 | --- | --- |
 | ![Halo: Combat Evolved main menu running natively on an Anbernic RG35XX H under Knulli](docs/screenshots/main-menu.png) | ![Halo CE beach battle on The Silent Cartographer running on an Anbernic RG35XX H at 36 fps](docs/screenshots/b30-beach.png) |
+| **Server browser: public internet games** | **Online on Blood Gulch, a 23-player public game** |
+| ![Halo CE server browser on an Anbernic RG35XX H listing public internet games](docs/screenshots/server-browser.png) | ![Halo CE online multiplayer on Blood Gulch, sniper rifle zoomed on an enemy, on an Anbernic RG35XX H at 58 fps](docs/screenshots/blood-gulch-online.png) |
 
 ## Features
 
@@ -307,7 +310,7 @@ launcher's defaults for the handheld:
 | `display.frame_pacing` | `true` | Shows each frame at the display refresh it was drawn for, so that most frames show the world as it is when they are seen. |
 | `display.vsync` | `true` | Waits for the display between frames. |
 | `update.auto` | `false` | The upstream updater, which fetches upstream's builds rather than this port's; off. |
-| `network.online` | `false` | Internet play through invite links; off. |
+| `network.online` | `true` | Internet play: the server browser, hosting and joining. It connects only while you use them. |
 
 Environment variables such as `HALO_RENDER_SCALE=0.6` override a setting for
 one run. Every setting is described in

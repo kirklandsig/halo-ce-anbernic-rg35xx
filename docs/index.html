@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Halo CE on Anbernic RG35XX H: native Knulli port for the H700</title>
-<meta name="description" content="Halo: Combat Evolved runs natively on the Anbernic RG35XX H and other Allwinner H700 handhelds under Knulli: 60 fps menus, about 40 to 55 fps in the campaign. Open-source ARM64 port of the halo-ce-universal decompilation. Bring your own Xbox disc.">
+<meta name="description" content="Halo: Combat Evolved runs natively on the Anbernic RG35XX H and other Allwinner H700 handhelds under Knulli: 60 fps menus, about 40 to 55 fps in the campaign, online co-op and multiplayer. Open-source ARM64 port of the halo-ce-universal decompilation. Bring your own Xbox disc.">
 <meta name="keywords" content="Halo CE, Halo Combat Evolved, Anbernic, RG35XX H, RG35XXH, Knulli, Batocera, H700, Mali-G31, retro handheld, ARM64, native port, decompilation">
 <meta name="robots" content="index, follow">
 <link rel="canonical" href="https://kirklandsig.github.io/halo-ce-anbernic-rg35xx/">
@@ -352,6 +352,14 @@ footer p { margin: 0 0 10px; }
         <img src="screenshots/b30-beach.png" width="640" height="480" loading="lazy" alt="Halo CE beach battle on The Silent Cartographer running on an Anbernic RG35XX H at 36 fps">
         <figcaption>The Silent Cartographer (b30) at render scale 0.75, 36 fps.</figcaption>
       </figure>
+      <figure>
+        <img src="screenshots/server-browser.png" width="640" height="480" loading="lazy" alt="Halo CE server browser on an Anbernic RG35XX H listing public internet games">
+        <figcaption>The server browser: public internet games, joined from the handheld.</figcaption>
+      </figure>
+      <figure>
+        <img src="screenshots/blood-gulch-online.png" width="640" height="480" loading="lazy" alt="Halo CE online multiplayer on Blood Gulch, sniper rifle zoomed on an enemy, on an Anbernic RG35XX H at 58 fps">
+        <figcaption>Online on Blood Gulch in a 23-player public Slayer game, 58 fps.</figcaption>
+      </figure>
     </div>
   </section>
 
@@ -364,6 +372,7 @@ footer p { margin: 0 0 10px; }
       <li>Renderer changes for a tile-based GPU: program binary cache, fp16 shaders, 16-bit textures, asynchronous occlusion readback, quad batching and decal ordering (about 700 decal draws become about 20), model LOD scaling, and shadows drawn without render-target switches.</li>
       <li>Adjustable render scale, CPU and GPU clocks pinned while playing, and the handheld's own controls.</li>
       <li>The first launch extracts <code>maps/</code> from your Xbox disc image on the handheld.</li>
+      <li>Online play from upstream OpenCE: campaign co-op and multiplayer over the internet (a server browser of public games) or the local network, with the PC version's menus, against PCs and other handhelds.</li>
     </ul>
   </section>
 

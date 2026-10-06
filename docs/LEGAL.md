@@ -11,7 +11,7 @@ here only to describe what the software is compatible with.
 - Source code: the Knulli host in `port/knulli/`, a patch against the
   upstream decompilation in `patches/`, a build script and development
   tools.
-- Documentation and two screenshots of the game running on the handheld.
+- Documentation and screenshots of the game running on the handheld.
 
 Its [releases](https://github.com/kirklandsig/halo-ce-anbernic-rg35xx/releases/latest) hold the port built from this source at the
 release's commit: the programs `halo` and `halo_guest.elf`, the launcher and
