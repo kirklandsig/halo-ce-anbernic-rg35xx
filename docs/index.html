@@ -130,7 +130,7 @@
       "name": "Does it work on muOS or ROCKNIX?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "With the PortMaster zip, muOS is expected to work: its system has the same Mali driver as Knulli and what else the port needs, checked from its image, but it has not been tested on a handheld yet. ROCKNIX is untested, and can use a different graphics driver (Panfrost). The host is built on glibc 2.31 and links EGL and OpenGL ES by their usual names, so that it loads on firmware older than Knulli. Reports are welcome."
+        "text": "muOS works with the PortMaster zip from v2026.10.07, tested on an RG35XX H with muOS 2601 Jacaranda, in the campaign and online. Earlier releases crashed there in menus, at respawn and in the pause menu: muOS's SDL takes over the crash handler the port uses to notice the game writing to its textures. ROCKNIX is untested, and can use a different graphics driver (Panfrost). The host is built on glibc 2.31 and links EGL and OpenGL ES by their usual names, so that it loads on firmware older than Knulli. Reports are welcome."
       }
     },
     {
@@ -413,7 +413,7 @@ footer p { margin: 0 0 10px; }
         </tbody>
       </table>
     </div>
-    <p class="note">Firmware: Knulli is tested, with the Knulli zip and with the PortMaster zip. muOS is expected to work with the PortMaster zip (checked from its image) but is untested on a handheld; ROCKNIX is untested. TrimUI handhelds and devices with other SoCs are not supported.</p>
+    <p class="note">Firmware: Knulli is tested, with the Knulli zip and with the PortMaster zip. muOS (2601 Jacaranda) is tested with the PortMaster zip from v2026.10.07; ROCKNIX is untested. TrimUI handhelds and devices with other SoCs are not supported.</p>
   </section>
 
   <section id="install" aria-labelledby="install-title">
@@ -459,7 +459,7 @@ ls dist/           # halo  halo_guest.elf  Halo.sh  halo_extract.py  halo_screen
     <h3>Does it need PortMaster?</h3>
     <p>Not on Knulli: the Knulli zip is a plain port, a launcher script in <code>roms/ports</code> and a folder. Each release also has a PortMaster zip, for PortMaster on Knulli or on other firmware (<a href="https://github.com/kirklandsig/halo-ce-anbernic-rg35xx/blob/main/docs/INSTALL.md#installing-with-portmaster">Install</a>). Both use the firmware's own SDL2 and graphics driver and none of PortMaster's runtimes.</p>
     <h3>Does it work on muOS or ROCKNIX?</h3>
-    <p>With the PortMaster zip, muOS is expected to work: its system has the same Mali driver as Knulli and what else the port needs, checked from its image, but it has not been tested on a handheld yet. ROCKNIX is untested, and can use a different graphics driver (Panfrost). The host is built on glibc 2.31 and links EGL and OpenGL ES by their usual names, so that it loads on firmware older than Knulli. Reports are welcome.</p>
+    <p>muOS works with the PortMaster zip from v2026.10.07, tested on an RG35XX H with muOS 2601 Jacaranda, in the campaign and online. Earlier releases crashed there in menus, at respawn and in the pause menu: muOS's SDL takes over the crash handler the port uses to notice the game writing to its textures. ROCKNIX is untested, and can use a different graphics driver (Panfrost). The host is built on glibc 2.31 and links EGL and OpenGL ES by their usual names, so that it loads on firmware older than Knulli. Reports are welcome.</p>
     <h3>Why not run the PC version with Box64 and Wine?</h3>
     <p>The PC version is a 32-bit x86 Windows program that draws with Direct3D 9. Running it on the H700 would need x86 translation, Wine, and a Direct3D to OpenGL ES translation layer, all on four Cortex-A53 cores and 1 GB of RAM. Each layer costs CPU time the device does not have. The native port runs the game's own logic as ARM64 code and draws with OpenGL ES directly.</p>
     <h3>Why not use xemu?</h3>

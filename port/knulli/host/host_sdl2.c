@@ -119,6 +119,8 @@ int host_sdl_init(uint32_t flags)
 		host_logf(HOST_LOG_ERROR, "SDL_Init(%#x): %s", flags, SDL_GetError());
 		return 0;
 	}
+	/* (SDL's evdev keyboard takes the fault handlers on a console tty) */
+	host_signal_handlers_first();
 	{
 		const char *video = SDL_GetCurrentVideoDriver();
 		const char *audio = SDL_GetCurrentAudioDriver();
@@ -496,8 +498,16 @@ static int translate(const SDL_Event *event, struct host_event *result)
 
 int host_sdl_poll_event(void *event)
 {
+	static Uint64 handlers_checked;
+	Uint64 now = SDL_GetTicks64();
 	SDL_Event host_event;
 
+	/* (and again when a keyboard is plugged in) */
+	if (now - handlers_checked >= 1000)
+	{
+		handlers_checked = now;
+		host_signal_handlers_first();
+	}
 	while (SDL_PollEvent(&host_event))
 	{
 		struct host_event translated;

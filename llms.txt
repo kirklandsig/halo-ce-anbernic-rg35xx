@@ -13,7 +13,7 @@
 
 - Tested: Anbernic RG35XX H.
 - Untested, expected to work: Anbernic RG35XX Plus, RG35XX SP, RG35XX 2024, RG40XX H, RG40XX V.
-- Untested: Anbernic RG CubeXX (720x720), RG34XX (720x480). muOS: expected to work with the PortMaster zip, untested on a handheld. ROCKNIX: untested.
+- Untested: Anbernic RG CubeXX (720x720), RG34XX (720x480). muOS (2601 Jacaranda): tested with the PortMaster zip from v2026.10.07 (earlier releases crash there). ROCKNIX: untested.
 - Not supported: TrimUI handhelds and other SoCs.
 
 ## Frame rates (RG35XX H, last updated 2026-10-06, release v2026.10.06)

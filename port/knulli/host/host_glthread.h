@@ -71,12 +71,14 @@ void glthread_generate_names(int kind, GLsizei n, GLuint *names);
 /* a queued call's name (glthread_gen.py) */
 const char *glthread_function_name(uint32_t function);
 void glthread_driver_use_program(GLuint program);
+void glthread_driver_delete_program(GLuint program);
 
 /* programs that threads of their own build (host_glthread.c): while the
 one bound is being built, the generated replay asks whether to make a draw
 or a uniform call (the uniform's is kept for later otherwise) */
 extern int glthread_program_blocked;
 void glthread_program_use(GLuint program);
+void glthread_program_delete(GLuint program);
 int glthread_program_draw(void);
 int glthread_program_uniform(const void *call);
 

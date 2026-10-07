@@ -177,8 +177,10 @@ logged as it ends */
 static int pass_trace;
 /* HALO_GPU_PASS_TIMING=3: in those frames, the GPU's time for each draw
 (each drawn by itself: the time includes a load and store of the target's
-tiles), and a slow draw's state */
+tiles), and a slow draw's state: one taking at least HALO_GPU_DRAW_STATE_US
+(2000; 0 for every draw) */
 static int draw_trace;
+static uint64_t draw_state_ns = 2000000;
 /* HALO_GPU_PASS_TIMING=4: in that frame, how long each change of render target
 waited in the driver, with the GPU running as it does (nothing finished) */
 static int bind_trace;
@@ -309,7 +311,7 @@ static void draw_traced(const struct command *command)
 	host_logf(HOST_LOG_INFO, "draw: frame %u pass %2u framebuffer %3u program %4d count %6d gpu %7.3f ms",
 		pass_frames_total, pass_index, pass_framebuffer, glthread_driver_integer(GL_CURRENT_PROGRAM),
 		glthread_draw_count(command->function, command + 1), (now - flushed) / 1e6);
-	if (now - flushed > 2000000ull)
+	if (now - flushed >= draw_state_ns)
 		draw_state_log(command);
 }
 
@@ -1831,7 +1833,8 @@ A program the guest makes (host_gl_program_build) took the GL thread about
 when it had none: a stall of the frame, and of the game's thread behind it.
 Threads of their own build them instead, on contexts that share the GL
 thread's objects: the loader loads binaries and hands what has none to the
-compiler, so that a load never waits for a compile. Until a program is
+compilers (two: a compile is single-threaded in the driver, and a level's
+first play needs many), so that a load never waits for a compile. Until a program is
 built the GL thread leaves it unbound: the draws made with it are skipped
 (what it draws appears a frame or more late, the first time), and the
 uniforms set for it are kept, to be set once it is bound. The generated
@@ -1868,10 +1871,15 @@ struct builder
 	struct program_job *first, *last;
 	EGLContext context;
 	uint32_t state;                 /* 0 starting, 1 running, 2 without its context */
+	/* the builder whose queue it takes its jobs from, if not its own */
+	struct builder *queue;
 };
 
 static struct builder loader = { "halo-load", 0, PTHREAD_MUTEX_INITIALIZER, PTHREAD_COND_INITIALIZER };
 static struct builder compiler = { "halo-compile", 5, PTHREAD_MUTEX_INITIALIZER, PTHREAD_COND_INITIALIZER };
+/* (HALO_COMPILERS=1: not started) */
+static struct builder compiler_2 = { "halo-compile2", 5, PTHREAD_MUTEX_INITIALIZER, PTHREAD_COND_INITIALIZER,
+	.queue = &compiler };
 static int builders_running;
 /* the GL thread's context, whose objects the contexts made current on other
 threads share (the program builders, and the guest's texture worker) */
@@ -1885,6 +1893,12 @@ its draws skipped */
 static struct program_job **jobs;
 static uint32_t job_capacity;
 static struct program_job unbuildable = { .done = 1 };
+
+static void job_free(struct program_job *job)
+{
+	free(job->deferred);
+	free(job);
+}
 /* the program the guest bound last, and whether it is being built */
 static uint32_t bound_program;
 int glthread_program_blocked;
@@ -1974,7 +1988,7 @@ static void *builder_main(void *argument)
 		return NULL;
 	for (;;)
 	{
-		struct program_job *job = builder_pop(builder);
+		struct program_job *job = builder_pop(builder->queue ? builder->queue : builder);
 		const char *path = (const char *)(job + 1);
 		const char *vertex = path + job->build.path_size;
 
@@ -1982,6 +1996,7 @@ static void *builder_main(void *argument)
 		{
 			if (!host_gl_program_load(job->build.program, path))
 			{
+				/* (the compilers share the first's queue) */
 				builder_push(&compiler, job);
 				continue;
 			}
@@ -2005,13 +2020,15 @@ static void *builder_main(void *argument)
 that share its objects */
 static void builders_start(void)
 {
-	struct builder *builders[] = { &loader, &compiler };
+	struct builder *builders[] = { &loader, &compiler, &compiler_2 };
 	const char *setting = getenv("HALO_ASYNC_PROGRAMS");
+	const char *compilers = getenv("HALO_COMPILERS");
+	unsigned int count = compilers && *compilers == '1' ? 2 : 3;
 	unsigned int index = 0;
 
 	if (builders_running || (setting && *setting == '0'))
 		return;
-	for (; index < 2; index++)
+	for (; index < count; index++)
 	{
 		pthread_t builder_thread;
 
@@ -2021,17 +2038,19 @@ static void builders_start(void)
 			break;
 		pthread_setname_np(builder_thread, builders[index]->name);
 	}
-	/* each makes its context current on its own thread */
-	builders_running = index == 2;
+	/* each makes its context current on its own thread (the loader and the
+	first compiler are needed; a second that did not start is done without) */
+	builders_running = index >= 2;
 	while (index > 0)
 	{
 		index--;
 		wait_while_equal(&builders[index]->state, 0, SPIN_LIMIT);
-		if (builders[index]->state != 1)
+		if (builders[index]->state != 1 && index < 2)
 			builders_running = 0;
 	}
 	if (builders_running)
-		host_logf(HOST_LOG_INFO, "programs are built by threads of their own");
+		host_logf(HOST_LOG_INFO, "programs are built by threads of their own (%d compiling)",
+			compiler_2.state == 1 ? 2 : 1);
 	else
 		host_logf(HOST_LOG_WARN, "cannot start the program builders (EGL error 0x%x): programs are built on the GL thread",
 			eglGetError());
@@ -2111,8 +2130,7 @@ static int program_ready(uint32_t program)
 		return 0;
 	if (!job->linked)
 	{
-		free(job->deferred);
-		free(job);
+		job_free(job);
 		jobs[program] = &unbuildable;
 		return 0;
 	}
@@ -2137,8 +2155,7 @@ static void program_bind(uint32_t program)
 		glthread_replay(command->function, command + 1);
 		offset += command->size;
 	}
-	free(job->deferred);
-	free(job);
+	job_free(job);
 }
 
 /* binds the bound program if it is built now: whether it could */
@@ -2154,6 +2171,26 @@ void glthread_program_use(GLuint program)
 {
 	bound_program = program;
 	glthread_program_blocked = !program_unblock();
+}
+
+/* a program deleted (d3d8_gl.c's programs_sweep): its job goes with it, once
+its builder is done with it (deleted minutes after it was last asked for, it
+was built long before), so a program given its name again starts without it */
+void glthread_program_delete(GLuint program)
+{
+	struct program_job *job = program < job_capacity ? jobs[program] : NULL;
+
+	if (job)
+	{
+		if (job != &unbuildable)
+		{
+			while (!__atomic_load_n(&job->done, __ATOMIC_ACQUIRE))
+				sched_yield();
+			job_free(job);
+		}
+		jobs[program] = NULL;
+	}
+	glthread_driver_delete_program(program);
 }
 
 int glthread_program_draw(void)
@@ -2713,6 +2750,8 @@ static int glthread_enabled(void)
 		pass_timing = timing && *timing && *timing != '0';
 		pass_trace = timing && (*timing == '2' || *timing == '3');
 		draw_trace = timing && *timing == '3';
+		if (getenv("HALO_GPU_DRAW_STATE_US"))
+			draw_state_ns = (uint64_t)atol(getenv("HALO_GPU_DRAW_STATE_US")) * 1000;
 		if (getenv("HALO_GPU_TRACE_PASSES_AT"))
 			pass_trace_frame = (uint32_t)atoi(getenv("HALO_GPU_TRACE_PASSES_AT"));
 		if (getenv("HALO_GPU_TRACE_PASSES_FRAMES"))

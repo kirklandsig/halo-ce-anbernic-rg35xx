@@ -72,7 +72,7 @@ The port needs an Allwinner H700 (4x Cortex-A53 at 1.5 GHz, Mali-G31 MP2,
 | --- | --- | --- |
 | Knulli (Gladiator II) | the Knulli zip | Tested |
 | Knulli (Gladiator II) | the PortMaster zip | Tested |
-| muOS | the PortMaster zip | Expected to work: its system has what the port needs (the same Mali driver as Knulli, SDL2 with the Mali video driver, glibc 2.38), checked from its 2601.1 image. Not yet tested on a handheld |
+| muOS (2601 Jacaranda) | the PortMaster zip | Tested from v2026.10.07 (RG35XX H, offline and online). Earlier releases crashed there in menus, at respawn and in the pause menu |
 | ArkOS and others with PortMaster | the PortMaster zip | Untested. The host needs glibc 2.30 or newer and SDL2 2.0.18 or newer |
 | ROCKNIX | the PortMaster zip | Untested. ROCKNIX can use the open Panfrost driver instead of Arm's, which the port has not been tested with |
 

@@ -140,9 +140,8 @@ The driver's per-draw cost is the largest single item. The ways to cut it:
   V) are expected to work. The RG CubeXX (720x720) and the RG34XX have other
   screen shapes, which `display.screen_width = 0` (the launcher's) fits.
 - Other firmware: each release has a PortMaster zip, tested with
-  PortMaster on Knulli. muOS is expected to work (checked from its image)
-  but is untested on a handheld; ROCKNIX, whose Panfrost driver the port has
-  not met, is untested.
+  PortMaster on Knulli and, from v2026.10.07, on muOS 2601 Jacaranda.
+  ROCKNIX, whose Panfrost driver the port has not met, is untested.
 
 Reports from other devices and firmware are welcome
 ([Contributing](../CONTRIBUTING.md)).

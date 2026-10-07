@@ -75,7 +75,7 @@ HOOKS = {
 DRAWS = ("glDrawArrays", "glDrawElements", "glDrawElementsBaseVertex", "glDrawRangeElementsBaseVertex",
          "glDrawElementsInstancedBaseVertex")
 # queued calls that host_glthread.c makes instead of the driver, with the same arguments
-REPLACED = {"glUseProgram": "glthread_program_use"}
+REPLACED = {"glUseProgram": "glthread_program_use", "glDeleteProgram": "glthread_program_delete"}
 # pointer arguments that are offsets into a bound buffer, passed as they are
 OFFSETS = {
     ("glVertexAttribPointer", "pointer"), ("glVertexAttribIPointer", "pointer"),
@@ -234,6 +234,8 @@ def main():
     emit("\t((void (GL_APIENTRY *)(void))driver[glthread_glFinish])();\n}\n")
     emit("void glthread_driver_use_program(GLuint program)\n{")
     emit("\t((void (GL_APIENTRY *)(GLuint))driver[glthread_glUseProgram])(program);\n}\n")
+    emit("void glthread_driver_delete_program(GLuint program)\n{")
+    emit("\t((void (GL_APIENTRY *)(GLuint))driver[glthread_glDeleteProgram])(program);\n}\n")
     emit("void glthread_driver_flush(void)\n{")
     emit("\t((void (GL_APIENTRY *)(void))driver[glthread_glFlush])();\n}\n")
     emit("GLint glthread_driver_integer(GLenum name)\n{")

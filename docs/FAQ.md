@@ -42,10 +42,12 @@ own SDL2 and graphics driver and none of PortMaster's runtimes.
 
 ## Does it work on muOS or ROCKNIX?
 
-With the PortMaster zip, muOS is expected to work: its system has the same
-Mali driver as Knulli and what else the port needs, checked from its image,
-but it has not been tested on a handheld yet. ROCKNIX is untested, and can
-use a different graphics driver (Panfrost). The host is built on glibc 2.31
+muOS works with the PortMaster zip from v2026.10.07, tested on an RG35XX
+H with muOS 2601 Jacaranda, in the campaign and online. Earlier releases
+crashed there in menus, at respawn and in the pause menu: muOS's SDL takes
+over the crash handler the port uses to notice the game writing to its
+textures. ROCKNIX is untested, and can use a different graphics driver
+(Panfrost). The host is built on glibc 2.31
 and links EGL and OpenGL ES by their usual names, so that it loads on
 firmware older than Knulli. Reports are welcome.
 

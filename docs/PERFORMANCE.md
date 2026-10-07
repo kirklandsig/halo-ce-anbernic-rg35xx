@@ -522,6 +522,33 @@ memory is the same. Benchmarks need EmulationStation stopped:
 with it idle in the background, its frames go to the screen between the
 game's, every run is held at 30 fps, and the menu shows through the game.
 
+## Text, sound and memory (2026-10-07)
+
+**Text.** Text was drawn a character at a time, each character its own
+draw. The server browser made about 1,225 draws a frame and ran at 18 fps.
+Characters and other small quads drawn one after another are now gathered
+into one draw: the browser holds 60 fps, and the b30 battle gained about 8%
+(42.4 and 43.0 fps against 39.7 and 39.1, alternating runs).
+
+**Sound on muOS.** Firing into shielded enemies in the b30 beach battle
+dropped muOS to 9 to 23 fps, with 100 to 160 ms frames. A profile of the
+game's thread in those frames put half its time waiting for the sound
+mixer's lock. The mixer, upstream's since 76addf66, resampled every voice
+with a 32-tap windowed sinc while holding that lock, and the battle had 53
+to 57 voices: the mixer held the lock 79 to 87% of the time. On the
+handheld it now uses 8 taps, skips voices too quiet to hear (under -60
+dB) and lets go of the lock every 256 frames instead of 1024. The same
+fight then ran at 33 to 46 fps, the mixer held the lock 19 to 41% of the
+time, and sound was 5% of the slow frames. On Knulli the old mixer never
+stalled like this (39 to 60 fps in the same fight), and the new one runs it
+at 45 to 58 fps.
+
+**Memory over a session.** Each level played kept its shaders, about 25 MB
+of the GPU driver's memory a level. A program not drawn with since the
+current level loaded is now deleted a minute after the load. After six
+levels in one session, about 50 MB more memory was free (390 MB against
+339 MB).
+
 ## Where the threads' frames go (2026-10-02)
 
 **Not the GPU, in a30 and the b30 battle.** The plan was dynamic resolution:

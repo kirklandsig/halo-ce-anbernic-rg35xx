@@ -83,6 +83,10 @@ game thread's frames, with its time */
 int host_profile_sampling(void);
 void host_profile_mark(uint32_t frame, uint32_t microseconds);
 
+/* the fault handlers (host_memory.c) put first again, if a library took
+them after they were installed */
+void host_signal_handlers_first(void);
+
 /* the OpenGL call timer (host_gl_timing.c): HALO_GL_TIMING wraps the
 driver's functions; the report logs their calls and time per frame */
 int host_gl_timing_enabled(void);

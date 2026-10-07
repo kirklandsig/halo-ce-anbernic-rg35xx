@@ -120,7 +120,7 @@ The port needs an Allwinner H700 (4x Cortex-A53 at 1.5 GHz, Mali-G31 MP2,
 | --- | --- | --- |
 | Knulli (Gladiator II) | the Knulli zip | Tested |
 | Knulli (Gladiator II) | the PortMaster zip | Tested |
-| muOS | the PortMaster zip | Expected to work: its system has what the port needs (the same Mali driver as Knulli, SDL2 with the Mali video driver, glibc 2.38), checked from its 2601.1 image. Not yet tested on a handheld |
+| muOS (2601 Jacaranda) | the PortMaster zip | Tested from v2026.10.07 (RG35XX H, offline and online). Earlier releases crashed there in menus, at respawn and in the pause menu |
 | ArkOS and others with PortMaster | the PortMaster zip | Untested. The host needs glibc 2.30 or newer and SDL2 2.0.18 or newer |
 | ROCKNIX | the PortMaster zip | Untested. ROCKNIX can use the open Panfrost driver instead of Arm's, which the port has not been tested with |
 
@@ -388,10 +388,12 @@ firmware's own SDL2 and graphics driver and none of PortMaster's runtimes.
 
 ### Does it work on muOS or ROCKNIX?
 
-With the PortMaster zip, muOS is expected to work: its system has the same
-Mali driver as Knulli and what else the port needs, checked from its image,
-but it has not been tested on a handheld yet. ROCKNIX is untested, and can
-use a different graphics driver (Panfrost). The host is built on glibc 2.31
+muOS works with the PortMaster zip from v2026.10.07, tested on an RG35XX
+H with muOS 2601 Jacaranda, in the campaign and online. Earlier releases
+crashed there in menus, at respawn and in the pause menu: muOS's SDL takes
+over the crash handler the port uses to notice the game writing to its
+textures. ROCKNIX is untested, and can use a different graphics driver
+(Panfrost). The host is built on glibc 2.31
 and links EGL and OpenGL ES by their usual names, so that it loads on
 firmware older than Knulli. Reports are welcome.
 
