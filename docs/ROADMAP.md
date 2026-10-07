@@ -160,8 +160,9 @@ Reports from other devices and firmware are welcome
   after its intro ([above](#3-the-gpu-and-the-picture)).
 - **Movies.** Bink video is not available in the upstream port, so the game
   skips its movies.
-- **Network play.** The launcher turns internet play off
-  (`network.online = false`).
+- **Network play.** Internet play is on (`network.online = true`), and a
+  game on the local network needs Wi-Fi too: offline, creating one says
+  "Network connection lost".
 - **Late objects.** The first time each combination of shaders is drawn,
   it is compiled on the program builder's thread (220 to 250 ms) and what
   it draws is skipped until then; the cache in `save/shaders/` keeps it for

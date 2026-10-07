@@ -549,6 +549,24 @@ current level loaded is now deleted a minute after the load. After six
 levels in one session, about 50 MB more memory was free (390 MB against
 339 MB).
 
+**Models after a level change.** In a level loaded after another one,
+marines could be drawn as stick figures, their legs thin black lines, and
+some bodies not at all. The Silent Cartographer after The Pillar of Autumn
+showed it in test after test, back to v2026.10.02; loaded first, never. The
+level's data in memory was byte for byte the same either way. The vertices
+the GPU read were not: Mali's driver can lay an older copy of a vertex
+buffer over pages written into it without synchronization
+([Mali notes](MALI-G31-NOTES.md#glbuffersubdata-and-unsynchronized-writes)).
+Those writes now wait until the GPU is past the copy, with the frame rates
+unchanged (b30's battle 44 to 45 fps in the same test before and after).
+The beach's sand and water, which sometimes went missing in the same case,
+have not gone missing since.
+
+**Music after a load.** A sound that ran out of data, as the music can
+across a level load, stopped for good: the mixer stopped taking from it and
+never looked again, even once the game had sent more. Upstream's mixer
+does the same. It now starts the sound again as soon as there is data.
+
 ## Where the threads' frames go (2026-10-02)
 
 **Not the GPU, in a30 and the b30 battle.** The plan was dynamic resolution:

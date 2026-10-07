@@ -22,6 +22,7 @@ history is in [Performance](PERFORMANCE.md).
 - [Vertex shader outputs and gl_PointSize](#vertex-shader-outputs-and-gl_pointsize)
 - [Alpha test and forward pixel kill](#alpha-test-and-forward-pixel-kill)
 - [Uncached buffer mappings](#uncached-buffer-mappings)
+- [glBufferSubData and unsynchronized writes](#glbuffersubdata-and-unsynchronized-writes)
 - [Depth, stencil and clears](#depth-stencil-and-clears)
 - [What was not the limit](#what-was-not-the-limit)
 - [Shader programs](#shader-programs)
@@ -238,6 +239,10 @@ constants into two blocks (per part, and the object's nodes written only as
 far as the nodes go and found again when the same nodes are bound again),
 together with the mapping made readable, took the buffer writes from 2.9 to
 1.9 ms a frame; the benchmark above puts that gain on the smaller writes.
+The nodes' block is uploaded whole again since v2026.10.07: a vertex bound
+to one node still reads a second one past the object's, weighted 0, and the
+buffer's bytes there could read as a NaN (0 × NaN is NaN), which flung
+vertices across the screen.
 
 **The flushes are cheap.** Deferring `glFlushMappedBufferRange` to the
 changes of render target, the fences and the swap left the buffer writes at
@@ -248,6 +253,33 @@ buffer until the GPU is done with it, so a large buffer orphaned each frame
 costs its size for every frame in flight. Upstream streams each frame into
 the next of three buffers, reused only after the GPU passes the fence of
 the frame that last used it.
+
+## glBufferSubData and unsynchronized writes
+
+**Don't mix them on one buffer.** The renderer keeps the Xbox's vertex and
+index memory in GL buffers of 4 MB, updated a page at a time. A page that
+changed is written again with `glBufferSubData`; a page written for the
+first time, which no queued draw can be reading, went in through an
+unsynchronized mapping, to save the driver's copy. When queued draws still
+read a buffer, Mali's driver carries out a `glBufferSubData` by giving the
+buffer new storage straight away and copying the old contents into it on
+the GPU's timeline. An unsynchronized write made in the meantime goes into
+the new storage, and the copy then lands on top of it with the old bytes.
+
+In the game this showed after a level change: the next level's load writes
+some pages again (the previous level's) and some for the first time, in the
+same buffers, and some of the new level's vertices were drawn as the old
+level's. Marines in The Silent Cartographer after The Pillar of Autumn had
+legs drawn as thin black lines, or no body at all. A level loaded first
+writes no page twice, so it never showed there. With every page written by
+`glBufferSubData`, or the buffers bypassed, the models were whole.
+
+Since v2026.10.07 a buffer remembers the frame of its latest
+`glBufferSubData`, and a first-time page goes in unsynchronized only once
+the GPU is known to have finished that frame (the renderer waits for each
+frame's fence three frames later, when it reuses that frame's stream
+buffer); until then it goes in with `glBufferSubData` too. The frame rates
+were unchanged.
 
 ## Depth, stencil and clears
 
