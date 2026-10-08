@@ -1,4 +1,4 @@
-# Halo: Combat Evolved on Anbernic RG35XX H — native port for Knulli (Allwinner H700)
+# Halo: Combat Evolved on Anbernic RG35XX H — native port for Knulli, MuOS (Allwinner H700)
 
 Yes — Halo CE runs natively on the Anbernic RG35XX H (RG35XXH) under Knulli:
 60 fps in the menus and about 40 to 55 fps in campaign levels at the default
