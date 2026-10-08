@@ -162,7 +162,9 @@ Reports from other devices and firmware are welcome
   skips its movies.
 - **Network play.** Internet play is on (`network.online = true`), and a
   game on the local network needs Wi-Fi too: offline, creating one says
-  "Network connection lost".
+  "Network connection lost". The handheld plays upstream's network version
+  24 and loads no Custom Edition maps, so it can't join a game on one, and
+  it needs a new release each time upstream raises the version.
 - **Late objects.** The first time each combination of shaders is drawn,
   it is compiled on the program builder's thread (220 to 250 ms) and what
   it draws is skipped until then; the cache in `save/shaders/` keeps it for

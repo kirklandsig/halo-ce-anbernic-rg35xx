@@ -315,9 +315,12 @@ public STUN servers tell each its internet address. To turn it off, set
 Updating from a version before co-op turns it on once; after that your
 choice is kept.
 
-Every machine in a game has to run the same network version: play with
-people on a build of the same upstream commit (this release:
-`UPSTREAM_COMMIT`).
+Every machine in a game has to run the same network version, and the
+server browser lists only games of its own. From v2026.10.08 the handheld
+plays version 24, upstream's from 2026-10-08, with the PC and Android builds
+of that day on. When upstream raises the version again, the handheld needs a
+new release to see their games. A game on a Custom Edition map can't be
+joined from the handheld.
 
 ## Changing settings
 
