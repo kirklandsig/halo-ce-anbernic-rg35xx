@@ -47,10 +47,10 @@ H with muOS 2601 Jacaranda, in the campaign and online. Earlier releases
 crashed there in menus, at respawn and in the pause menu: muOS's SDL takes
 over the crash handler the port uses to notice the game writing to its
 textures. ROCKNIX is reported working on an RG353M with Arm's Mali driver,
-under PortMaster's Weston wrapper and with `debug.instance_models = false`
-([#5](https://github.com/kirklandsig/halo-ce-anbernic-rg35xx/issues/5)); it can also use the open Panfrost driver, which the port has
-not been tried with. dArkOSen on an R36S is reported working from
-v2026.10.07 ([#4](https://github.com/kirklandsig/halo-ce-anbernic-rg35xx/issues/4)). The host is built on glibc 2.31
+once ROCKNIX was up to date: an older version (20260601) left parts of the
+picture frozen unless `debug.instance_models = false` ([#5](https://github.com/kirklandsig/halo-ce-anbernic-rg35xx/issues/5)). It can
+also use the open Panfrost driver, which the port has not been tried with.
+dArkOSen on an R36S is reported working from v2026.10.07 ([#4](https://github.com/kirklandsig/halo-ce-anbernic-rg35xx/issues/4)). The host is built on glibc 2.31
 and links EGL and OpenGL ES by their usual names, so that it loads on
 firmware older than Knulli. Reports are welcome.
 
