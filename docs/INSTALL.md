@@ -54,7 +54,7 @@ other.
 
 ## Supported handhelds
 
-The port needs an Allwinner H700 (4x Cortex-A53 at 1.5 GHz, Mali-G31 MP2,
+The port is made for the Allwinner H700 (4x Cortex-A53 at 1.5 GHz, Mali-G31 MP2,
 1 GB RAM).
 
 | Device | Screen | Status |
@@ -67,6 +67,8 @@ The port needs an Allwinner H700 (4x Cortex-A53 at 1.5 GHz, Mali-G31 MP2,
 | Anbernic RG40XX V | 640x480 | Untested, expected to work |
 | Anbernic RG CubeXX | 720x720 | Untested |
 | Anbernic RG34XX | 720x480 | Untested |
+| Anbernic RG353M (RK3566, Mali-G52) | 640x480 | Works on ROCKNIX with `debug.instance_models = false`, reported by a user ([#5](https://github.com/kirklandsig/halo-ce-anbernic-rg35xx/issues/5)) |
+| R36S (RK3326, Mali-G31) | 640x480 | Works on dArkOSen from v2026.10.07, reported by a user ([#4](https://github.com/kirklandsig/halo-ce-anbernic-rg35xx/issues/4)) |
 
 | Firmware | How | Status |
 | --- | --- | --- |
@@ -74,10 +76,13 @@ The port needs an Allwinner H700 (4x Cortex-A53 at 1.5 GHz, Mali-G31 MP2,
 | Knulli (Gladiator II) | the PortMaster zip | Tested |
 | muOS (2601 Jacaranda) | the PortMaster zip | Tested from v2026.10.07 (RG35XX H, offline and online). Earlier releases crashed there in menus, at respawn and in the pause menu |
 | ArkOS and others with PortMaster | the PortMaster zip | Untested. The host needs glibc 2.30 or newer and SDL2 2.0.18 or newer |
-| ROCKNIX | the PortMaster zip | Untested. ROCKNIX can use the open Panfrost driver instead of Arm's, which the port has not been tested with |
+| ROCKNIX | the PortMaster zip | Reported working by a user on an RG353M (ROCKNIX 20260601, Arm's Mali driver), run under PortMaster's Weston wrapper, with `debug.instance_models = false`: with it on, parts of the picture stopped updating ([#5](https://github.com/kirklandsig/halo-ce-anbernic-rg35xx/issues/5)). ROCKNIX can also use the open Panfrost driver, which the port has not been tried with |
+| dArkOSen | the PortMaster zip | Reported working by a user on an R36S from v2026.10.07; earlier releases crashed there ([#4](https://github.com/kirklandsig/halo-ce-anbernic-rg35xx/issues/4)) |
 
-TrimUI handhelds and devices with other SoCs are not supported: they have
-different GPUs and drivers. If you try another device or firmware, please
+The port is made and tested for the H700's Mali-G31. Handhelds with other
+Mali GPUs and Arm's driver can work too: users report the Rockchip ones
+above working. TrimUI handhelds and other devices without a Mali GPU are not
+supported. If you try another device or firmware, please
 open an issue with the result and your `halo/log.txt`.
 
 ## The game data

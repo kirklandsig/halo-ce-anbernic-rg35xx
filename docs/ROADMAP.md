@@ -141,7 +141,10 @@ The driver's per-draw cost is the largest single item. The ways to cut it:
   screen shapes, which `display.screen_width = 0` (the launcher's) fits.
 - Other firmware: each release has a PortMaster zip, tested with
   PortMaster on Knulli and, from v2026.10.07, on muOS 2601 Jacaranda.
-  ROCKNIX, whose Panfrost driver the port has not met, is untested.
+  Users report ROCKNIX on an RG353M (Mali-G52, Arm's driver, with
+  `debug.instance_models = false`: why instancing fails there is not known
+  yet) and dArkOSen on an R36S working. ROCKNIX's Panfrost driver is
+  untried.
 
 Reports from other devices and firmware are welcome
 ([Contributing](../CONTRIBUTING.md)).
