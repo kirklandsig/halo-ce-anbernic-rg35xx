@@ -1,0 +1,259 @@
+diff --git a/port/assets/menus/ce/main_menu.settings_select.player_setup.player_profile_edit.audio_settings.xml b/port/assets/menus/ce/main_menu.settings_select.player_setup.player_profile_edit.audio_settings.xml
+index 2d164a1..529e37c 100644
+--- a/port/assets/menus/ce/main_menu.settings_select.player_setup.player_profile_edit.audio_settings.xml
++++ b/port/assets/menus/ce/main_menu.settings_select.player_setup.player_profile_edit.audio_settings.xml
+@@ -2,8 +2,8 @@
+ <!-- The port's settings screen, in the PC version's style (tools/port_settings.py) -->
+ <menus>
+ 	<widget name="main_menu/settings_select/player_setup/player_profile_edit/audio_settings/audio_settings_screen" width="640" height="480" flags="pass_unhandled_to_focused_child pause_game" bitmap="bitmaps/gradient">
+-		<on event="b" back="true"/>
+-		<on event="back" back="true"/>
++		<on event="b" run="port settings save" back="true"/>
++		<on event="back" run="port settings save" back="true"/>
+ 		<child widget="main_menu/settings_select/player_setup/player_profile_edit/audio_settings/header_profile_audio_settings"/>
+ 		<child widget="main_menu/settings_select/player_setup/player_profile_edit/audio_settings/options_menu"/>
+ 	</widget>
+diff --git a/port/assets/menus/ce/main_menu.settings_select.player_setup.player_profile_edit.gamepad_setup.xml b/port/assets/menus/ce/main_menu.settings_select.player_setup.player_profile_edit.gamepad_setup.xml
+index c604958..c09c53b 100644
+--- a/port/assets/menus/ce/main_menu.settings_select.player_setup.player_profile_edit.gamepad_setup.xml
++++ b/port/assets/menus/ce/main_menu.settings_select.player_setup.player_profile_edit.gamepad_setup.xml
+@@ -2,8 +2,8 @@
+ <!-- The port's settings screen, in the PC version's style (tools/port_settings.py) -->
+ <menus>
+ 	<widget name="main_menu/settings_select/player_setup/player_profile_edit/gamepad_setup/gamepad_setup_screen" width="640" height="480" flags="pass_unhandled_to_focused_child pause_game" bitmap="bitmaps/gradient">
+-		<on event="b" back="true"/>
+-		<on event="back" back="true"/>
++		<on event="b" run="port settings save" back="true"/>
++		<on event="back" run="port settings save" back="true"/>
+ 		<child widget="main_menu/settings_select/player_setup/player_profile_edit/gamepad_setup/header_profile_controller_setting"/>
+ 		<child widget="main_menu/settings_select/player_setup/player_profile_edit/gamepad_setup/options_menu"/>
+ 	</widget>
+diff --git a/port/assets/menus/ce/main_menu.settings_select.player_setup.player_profile_edit.mouse_settings.xml b/port/assets/menus/ce/main_menu.settings_select.player_setup.player_profile_edit.mouse_settings.xml
+index a359068..522ac68 100644
+--- a/port/assets/menus/ce/main_menu.settings_select.player_setup.player_profile_edit.mouse_settings.xml
++++ b/port/assets/menus/ce/main_menu.settings_select.player_setup.player_profile_edit.mouse_settings.xml
+@@ -2,8 +2,8 @@
+ <!-- The port's settings screen, in the PC version's style (tools/port_settings.py) -->
+ <menus>
+ 	<widget name="main_menu/settings_select/player_setup/player_profile_edit/mouse_settings/mouse_settings_screen" width="640" height="480" flags="pass_unhandled_to_focused_child pause_game" bitmap="bitmaps/gradient">
+-		<on event="b" back="true"/>
+-		<on event="back" back="true"/>
++		<on event="b" run="port settings save" back="true"/>
++		<on event="back" run="port settings save" back="true"/>
+ 		<child widget="main_menu/settings_select/player_setup/player_profile_edit/mouse_settings/header_profile_mouse_settings"/>
+ 		<child widget="main_menu/settings_select/player_setup/player_profile_edit/mouse_settings/options_menu"/>
+ 	</widget>
+diff --git a/port/assets/menus/ce/main_menu.settings_select.player_setup.player_profile_edit.network_setup.map_sharing.xml b/port/assets/menus/ce/main_menu.settings_select.player_setup.player_profile_edit.network_setup.map_sharing.xml
+index e0f7466..57ea685 100644
+--- a/port/assets/menus/ce/main_menu.settings_select.player_setup.player_profile_edit.network_setup.map_sharing.xml
++++ b/port/assets/menus/ce/main_menu.settings_select.player_setup.player_profile_edit.network_setup.map_sharing.xml
+@@ -2,8 +2,8 @@
+ <!-- The port's settings screen, in the PC version's style (tools/port_settings.py) -->
+ <menus>
+ 	<widget name="main_menu/settings_select/player_setup/player_profile_edit/network_setup/map_sharing/map_sharing_settings_screen" width="640" height="480" flags="pass_unhandled_to_focused_child pause_game" bitmap="bitmaps/gradient">
+-		<on event="b" back="true"/>
+-		<on event="back" back="true"/>
++		<on event="b" run="port settings save" back="true"/>
++		<on event="back" run="port settings save" back="true"/>
+ 		<child widget="main_menu/settings_select/player_setup/player_profile_edit/network_setup/map_sharing/header_profile_network_settings"/>
+ 		<child widget="main_menu/settings_select/player_setup/player_profile_edit/network_setup/map_sharing/options_menu"/>
+ 	</widget>
+diff --git a/port/assets/menus/ce/main_menu.settings_select.player_setup.player_profile_edit.network_setup.xml b/port/assets/menus/ce/main_menu.settings_select.player_setup.player_profile_edit.network_setup.xml
+index 0823fd3..d9c54af 100644
+--- a/port/assets/menus/ce/main_menu.settings_select.player_setup.player_profile_edit.network_setup.xml
++++ b/port/assets/menus/ce/main_menu.settings_select.player_setup.player_profile_edit.network_setup.xml
+@@ -2,8 +2,8 @@
+ <!-- The port's settings screen, in the PC version's style (tools/port_settings.py) -->
+ <menus>
+ 	<widget name="main_menu/settings_select/player_setup/player_profile_edit/network_setup/network_settings_screen" width="640" height="480" flags="pass_unhandled_to_focused_child pause_game" bitmap="bitmaps/gradient">
+-		<on event="b" back="true"/>
+-		<on event="back" back="true"/>
++		<on event="b" run="port settings save" back="true"/>
++		<on event="back" run="port settings save" back="true"/>
+ 		<child widget="main_menu/settings_select/player_setup/player_profile_edit/network_setup/header_profile_network_settings"/>
+ 		<child widget="main_menu/settings_select/player_setup/player_profile_edit/network_setup/options_menu"/>
+ 	</widget>
+diff --git a/port/assets/menus/ce/main_menu.settings_select.player_setup.player_profile_edit.video_settings.fov_viewmodels.xml b/port/assets/menus/ce/main_menu.settings_select.player_setup.player_profile_edit.video_settings.fov_viewmodels.xml
+index b44a91a..e312739 100644
+--- a/port/assets/menus/ce/main_menu.settings_select.player_setup.player_profile_edit.video_settings.fov_viewmodels.xml
++++ b/port/assets/menus/ce/main_menu.settings_select.player_setup.player_profile_edit.video_settings.fov_viewmodels.xml
+@@ -2,8 +2,8 @@
+ <!-- The port's settings screen, in the PC version's style (tools/port_settings.py) -->
+ <menus>
+ 	<widget name="main_menu/settings_select/player_setup/player_profile_edit/video_settings/fov_viewmodels/fov_viewmodel_settings_screen" width="640" height="480" flags="pass_unhandled_to_focused_child pause_game" bitmap="bitmaps/gradient">
+-		<on event="b" back="true"/>
+-		<on event="back" back="true"/>
++		<on event="b" run="port settings save" back="true"/>
++		<on event="back" run="port settings save" back="true"/>
+ 		<child widget="main_menu/settings_select/player_setup/player_profile_edit/video_settings/fov_viewmodels/header_profile_video_settings"/>
+ 		<child widget="main_menu/settings_select/player_setup/player_profile_edit/video_settings/fov_viewmodels/options_menu"/>
+ 	</widget>
+diff --git a/port/assets/menus/ce/main_menu.settings_select.player_setup.player_profile_edit.video_settings.graphics.xml b/port/assets/menus/ce/main_menu.settings_select.player_setup.player_profile_edit.video_settings.graphics.xml
+index 5e76b82..2110bd4 100644
+--- a/port/assets/menus/ce/main_menu.settings_select.player_setup.player_profile_edit.video_settings.graphics.xml
++++ b/port/assets/menus/ce/main_menu.settings_select.player_setup.player_profile_edit.video_settings.graphics.xml
+@@ -2,8 +2,8 @@
+ <!-- The port's settings screen, in the PC version's style (tools/port_settings.py) -->
+ <menus>
+ 	<widget name="main_menu/settings_select/player_setup/player_profile_edit/video_settings/graphics/graphics_settings_screen" width="640" height="480" flags="pass_unhandled_to_focused_child pause_game" bitmap="bitmaps/gradient">
+-		<on event="b" back="true"/>
+-		<on event="back" back="true"/>
++		<on event="b" run="port settings save" back="true"/>
++		<on event="back" run="port settings save" back="true"/>
+ 		<child widget="main_menu/settings_select/player_setup/player_profile_edit/video_settings/graphics/header_profile_video_settings"/>
+ 		<child widget="main_menu/settings_select/player_setup/player_profile_edit/video_settings/graphics/options_menu"/>
+ 	</widget>
+diff --git a/port/assets/menus/ce/main_menu.settings_select.player_setup.player_profile_edit.video_settings.xml b/port/assets/menus/ce/main_menu.settings_select.player_setup.player_profile_edit.video_settings.xml
+index e30060b..406cd34 100644
+--- a/port/assets/menus/ce/main_menu.settings_select.player_setup.player_profile_edit.video_settings.xml
++++ b/port/assets/menus/ce/main_menu.settings_select.player_setup.player_profile_edit.video_settings.xml
+@@ -2,8 +2,8 @@
+ <!-- The port's settings screen, in the PC version's style (tools/port_settings.py) -->
+ <menus>
+ 	<widget name="main_menu/settings_select/player_setup/player_profile_edit/video_settings/video_settings_screen" width="640" height="480" flags="pass_unhandled_to_focused_child pause_game" bitmap="bitmaps/gradient">
+-		<on event="b" back="true"/>
+-		<on event="back" back="true"/>
++		<on event="b" run="port settings save" back="true"/>
++		<on event="back" run="port settings save" back="true"/>
+ 		<child widget="main_menu/settings_select/player_setup/player_profile_edit/video_settings/header_profile_video_settings"/>
+ 		<child widget="main_menu/settings_select/player_setup/player_profile_edit/video_settings/options_menu"/>
+ 	</widget>
+diff --git a/port/assets/menus/ce/main_menu.settings_select.player_setup.player_profile_edit.xml b/port/assets/menus/ce/main_menu.settings_select.player_setup.player_profile_edit.xml
+index ce9faa7..9ee4d1a 100644
+--- a/port/assets/menus/ce/main_menu.settings_select.player_setup.player_profile_edit.xml
++++ b/port/assets/menus/ce/main_menu.settings_select.player_setup.player_profile_edit.xml
+@@ -43,8 +43,8 @@
+ 	</widget>
+ 	<widget name="main_menu/settings_select/player_setup/player_profile_edit/player_profile_edit_screen" width="640" height="480" flags="pass_unhandled_to_focused_child pause_game" bitmap="bitmaps/gradient">
+ 		<on event="created" run="close if not editing profile"/>
+-		<on event="b" run="player profile end editing" back="true"/>
+-		<on event="back" run="player profile end editing" back="true"/>
++		<on event="b" run="port profile save and end"/>
++		<on event="back" run="port profile save and end"/>
+ 		<child widget="main_menu/settings_select/player_setup/player_profile_edit/header_profile_settings"/>
+ 		<child widget="main_menu/settings_select/player_setup/player_profile_edit/profile_edit_select_list"/>
+ 		<child widget="main_menu/settings_select/player_setup/player_profile_edit/profile_label" x="293" y="375"/>
+diff --git a/port/linux/game/menu_functions.c b/port/linux/game/menu_functions.c
+index 596ee76..b52ee66 100644
+--- a/port/linux/game/menu_functions.c
++++ b/port/linux/game/menu_functions.c
+@@ -24,6 +24,8 @@ calls them from PC_MENU_FUNCTION_BASE on):
+   "profile.<field>" the controller's in the profile being edited;
+ - "port setting save", on its deleted event, writes the value shown back,
+   if the player changed it;
++- "port profile save and end", Settings' B and BACK, saves the profile's
++  changes as its OK does, then ends editing and goes back;
+ - the settings screens' (tools/port_settings.py): "port settings save"
+   (OK) writes those changed and applies the window's (the rest follow
+   config.toml themselves), "port settings defaults" shows the defaults,
+@@ -4112,24 +4114,18 @@ static boolean profile_save_changes(struct widget_instance *widget, boolean *wid
+ 	return TRUE;
+ }
+ 
+-/* "port profile settings save" (Gamepads' OK in a single-player campaign:
+-menu_tags.c's pause_settings_patch): the profile saved at once, not on
+-Settings' OK, so that the campaign's next save of the player's profile
+-keeps it; saving makes it the player's own (player_ui_save_profile), and it
+-is edited again from what was saved, for Settings to go on with */
+-static boolean profile_settings_save(struct widget_instance *widget)
++/* "port profile save and end" (Settings' B and BACK, the profile being
++edited): its changes saved, as OK saves them, then editing ends and the
++previous screen comes back (the PC version's B dropped them; the settings'
++own screens have written theirs as their B was chosen) */
++static boolean profile_save_and_end(struct widget_instance *widget, boolean *widget_deleted)
+ {
+-	long index = player_ui_get_edit_profile_index();
+-
+-	settings_each(screen_of(widget), setting_changed_save);
+-	if (!player_ui_get_edit_player_profile() || !player_ui_edit_profile_is_dirty())
+-		return TRUE;
+-	if (!player_ui_save_profile())
+-	{
++	if (player_ui_edit_profile_is_dirty() && !player_ui_save_profile())
+ 		platform_log("menus: could not save the profile's changes");
+-		return campaign_fail();
+-	}
+-	player_ui_begin_editing_profile(index);
++	player_ui_end_editing_profile();
++	ui_play_audio_feedback_sound(SOUND_BACK);
++	ui_widget_port_go_back(widget);
++	*widget_deleted = TRUE;
+ 	return TRUE;
+ }
+ 
+@@ -5724,9 +5720,9 @@ boolean pc_menu_event_function_invoke(
+ 		{
+ 			return profile_save_changes(widget, widget_deleted);
+ 		}
+-		else if (!strcmp(name, "port profile settings save"))
++		else if (!strcmp(name, "port profile save and end"))
+ 		{
+-			return profile_settings_save(widget);
++			return profile_save_and_end(widget, widget_deleted);
+ 		}
+ 		else if (!strcmp(name, "direct ip connect go"))
+ 		{
+diff --git a/port/linux/game/menu_tags.c b/port/linux/game/menu_tags.c
+index 1d12157..69a454a 100644
+--- a/port/linux/game/menu_tags.c
++++ b/port/linux/game/menu_tags.c
+@@ -386,11 +386,11 @@ static char const *const port_function_names[] =
+ 	"player profile save changes",
+ 	/* (the server browser's password screen) */
+ 	"port password init", "port password edit", "port password join", "port password back",
+-	/* (Gamepads' OK in a single-player campaign: pause_settings_patch) */
+-	"port profile settings save",
+ 	/* (a new profile's screens: Settings' is then being edited, which the
+ 	Xbox's leaves to its own screens) */
+ 	"new campaign decision",
++	/* (Settings' B and BACK: the profile's changes saved, as OK saves them) */
++	"port profile save and end",
+ };
+ 
+ /* the PC version's game data functions that the Xbox's have not, from
+@@ -1786,11 +1786,9 @@ copy of it. The rows use the PC version's pause menu's pitch, so a
+ highlight sits clear of the next label. The prompts (B and A) stay that same
+ gap under the last row, and the box beside the mission objectives grows with
+ them. Settings there has only the items
+-that work in a game (pause_settings_patch), and Gamepads' OK saves the
+-profile itself. */
++that work in a game (pause_settings_patch). */
+ 
+ #define PAUSE_SETTINGS_LIST "main_menu/settings_select/player_setup/player_profile_edit/profile_edit_select_list"
+-#define PAUSE_SETTINGS_GAMEPADS_OK "main_menu/settings_select/player_setup/player_profile_edit/gamepad_setup/button_ok"
+ 
+ /* Change Name's keyboard and Change Color's pictures are ui.map's, Network
+ Setup's settings are not for a game under way, and About is nothing to it */
+@@ -1937,15 +1935,12 @@ the others move up into the first places */
+ static void pause_settings_patch(void)
+ {
+ 	long list_widget = widget_named(PAUSE_SETTINGS_LIST);
+-	long ok_widget = widget_named(PAUSE_SETTINGS_GAMEPADS_OK);
+-	long settings_save = function_index("port settings save", "pause", 0);
+-	struct ui_widget_definition *list, *ok;
++	struct ui_widget_definition *list;
+ 	struct ui_widget_child_reference *children;
+-	struct ui_widget_event_handler_reference *handlers;
+ 	short places[16];
+-	long child, handler, place_count = 0, place = 0;
++	long child, place_count = 0, place = 0;
+ 
+-	if (list_widget == NONE || ok_widget == NONE)
++	if (list_widget == NONE)
+ 		return;
+ 	list = tag_get(UI_WIDGET_DEFINITION_TAG, build.widget_tags[list_widget]);
+ 	children = list->child_widgets.address;
+@@ -1976,13 +1971,6 @@ static void pause_settings_patch(void)
+ 			children[child].vertical_offset = (short)(places[place++] - item->bounds.y0);
+ 		}
+ 	}
+-	ok = tag_get(UI_WIDGET_DEFINITION_TAG, build.widget_tags[ok_widget]);
+-	handlers = ok->event_handlers.address;
+-	for (handler = 0; handler < ok->event_handlers.count; handler++)
+-	{
+-		if (handlers[handler].function == settings_save)
+-			handlers[handler].function = (short)function_index("port profile settings save", "pause", 0);
+-	}
+ }
+ 
+ static void pause_campaign_patch(struct cache_file_tag_instance *instances)
