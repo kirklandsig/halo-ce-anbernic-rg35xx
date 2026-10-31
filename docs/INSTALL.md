@@ -416,8 +416,8 @@ Updating from a version before co-op turns it on once; after that your
 choice is kept.
 
 Every machine in a game has to run the same network version, and the
-server browser lists only games of its own. From v2026.10.26 the handheld
-plays version 39, upstream's from 2026-10-25, with the PC and Android
+server browser lists only games of its own. From v2026.10.30 the handheld
+plays version 41, upstream's from 2026-10-29, with the PC and Android
 builds of that day on, and with people playing OpenCE's web build in
 a browser: a browser connects over WebRTC, which the handheld answers (DTLS,
 with Mbed TLS). When upstream raises the version again, the handheld needs a
@@ -429,7 +429,17 @@ out (its messages are dropped). Version 39 is upstream's dedicated servers
 (a host with no player of its own, `halo --server` on a PC): the handheld
 joins one as any other game, and the server browser shows those the
 internet brokers list among the others. Those listed only on upstream's
-master server don't show; an invite link to one still joins it. A game on a Custom Edition map can be
+master server don't show; an invite link to one still joins it. Version
+40 adds a Discord account's pass to the join request, which upstream's
+dedicated servers ask of a player on a VPN: the handheld links no Discord
+account, so a server that requires one refuses it, shown as the game being
+closed. Version 41 is the players' votes: while a vote runs (to kick a
+player, or to end the game), its box shows at the left of the screen, and
+the D-pad's left votes yes, its right no (only while the vote runs; on a
+handheld without a right stick, whose D-pad walks and turns, the D-pad
+doesn't vote). The handheld votes in the votes others start: starting one
+takes a PC's mouse on the scoreboard, or `!endgame` in a PC's chat. A game
+on a Custom Edition map can be
 joined: the map comes from the game's players
 ([Custom Edition maps](#custom-edition-maps)).
 

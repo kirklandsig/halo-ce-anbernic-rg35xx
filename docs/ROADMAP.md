@@ -166,7 +166,7 @@ Reports from other devices and firmware are welcome
 - **Network play.** Internet play is on (`network.online = true`), and a
   game on the local network needs Wi-Fi too: offline, creating one says
   "Network connection lost". The handheld plays upstream's network version
-  39, and needs a new release each time upstream raises the version. Its
+  41, and needs a new release each time upstream raises the version. Its
   server browser does not read upstream's master server, so a dedicated
   server listed only there doesn't show. It
   has no microphone, so upstream's voice chat can't send its voice.

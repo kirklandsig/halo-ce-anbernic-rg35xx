@@ -118,9 +118,10 @@ offered again ([Install: Updating](docs/INSTALL.md#updating)).
 - Upstream's online play: the campaign in co-op and multiplayer, over the
   internet (a server browser of public games) or the local network, with
   the PC version's menus ([Install: playing online](docs/INSTALL.md#playing-online)).
-  Network version 39, with OpenCE's own gametypes: SWAT, Infection, Gun
-  Game and Hardcore, in Select Gametype's OPENCE bank, and upstream's
-  dedicated servers, which it joins as any other host.
+  Network version 41, with OpenCE's own gametypes: SWAT, Infection, Gun
+  Game and Hardcore, in Select Gametype's OPENCE bank, upstream's
+  dedicated servers, which it joins as any other host, and the players'
+  votes (to kick a player, to end the game: D-pad left votes yes, right no).
 - Upstream's Halo Custom Edition maps, beside the Xbox game's: the
   community's multiplayer and campaign maps in `halo/custom_maps/`. Joining
   a game on one you don't have downloads it from the game's players
