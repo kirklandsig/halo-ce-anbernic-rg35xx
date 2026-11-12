@@ -416,8 +416,8 @@ Updating from a version before co-op turns it on once; after that your
 choice is kept.
 
 Every machine in a game has to run the same network version, and the
-server browser lists only games of its own. From v2026.10.30 the handheld
-plays version 41, upstream's from 2026-10-29, with the PC and Android
+server browser lists only games of its own. From v2026.11.11 the handheld
+plays version 43, upstream's from 2026-11-10, with the PC and Android
 builds of that day on, and with people playing OpenCE's web build in
 a browser: a browser connects over WebRTC, which the handheld answers (DTLS,
 with Mbed TLS). When upstream raises the version again, the handheld needs a
@@ -438,7 +438,15 @@ player, or to end the game), its box shows at the left of the screen, and
 the D-pad's left votes yes, its right no (only while the vote runs; on a
 handheld without a right stick, whose D-pad walks and turns, the D-pad
 doesn't vote). The handheld votes in the votes others start: starting one
-takes a PC's mouse on the scoreboard, or `!endgame` in a PC's chat. A game
+takes a PC's mouse on the scoreboard, or `!endgame` in a PC's chat.
+Version 42 marks every game message with the host's checkpoint, and version
+43 adds riding: a player standing on a moving vehicle is carried by it
+instead of sliding off. The host turns riding on (in multiplayer the
+gametype's VEHICLE RIDING rule, in co-op `network.vehicle_riding` in
+`config.toml`); the handheld's menus have no switch for it, and as a player
+in someone else's game it rides as that host decides. Upstream's support
+for the Master Chief Collection's maps is left out: a game on one of those
+maps can't be loaded on the handheld. A game
 on a Custom Edition map can be
 joined: the map comes from the game's players
 ([Custom Edition maps](#custom-edition-maps)).
