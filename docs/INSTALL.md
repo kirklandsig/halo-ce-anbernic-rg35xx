@@ -416,8 +416,8 @@ Updating from a version before co-op turns it on once; after that your
 choice is kept.
 
 Every machine in a game has to run the same network version, and the
-server browser lists only games of its own. From v2026.11.11 the handheld
-plays version 43, upstream's from 2026-11-10, with the PC and Android
+server browser lists only games of its own. From v2026.11.15 the handheld
+plays version 44, upstream's from 2026-11-12, with the PC and Android
 builds of that day on, and with people playing OpenCE's web build in
 a browser: a browser connects over WebRTC, which the handheld answers (DTLS,
 with Mbed TLS). When upstream raises the version again, the handheld needs a
@@ -446,7 +446,8 @@ gametype's VEHICLE RIDING rule, in co-op `network.vehicle_riding` in
 `config.toml`); the handheld's menus have no switch for it, and as a player
 in someone else's game it rides as that host decides. Upstream's support
 for the Master Chief Collection's maps is left out: a game on one of those
-maps can't be loaded on the handheld. A game
+maps can't be loaded on the handheld. Version 44 changes only how those maps
+are shared, so for the handheld it is the same game under a new number. A game
 on a Custom Edition map can be
 joined: the map comes from the game's players
 ([Custom Edition maps](#custom-edition-maps)).

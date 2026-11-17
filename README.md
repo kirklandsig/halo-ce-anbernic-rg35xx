@@ -118,7 +118,7 @@ offered again ([Install: Updating](docs/INSTALL.md#updating)).
 - Upstream's online play: the campaign in co-op and multiplayer, over the
   internet (a server browser of public games) or the local network, with
   the PC version's menus ([Install: playing online](docs/INSTALL.md#playing-online)).
-  Network version 43, with OpenCE's own gametypes: SWAT, Infection, Gun
+  Network version 44, with OpenCE's own gametypes: SWAT, Infection, Gun
   Game and Hardcore, in Select Gametype's OPENCE bank, upstream's
   dedicated servers, which it joins as any other host, the players'
   votes (to kick a player, to end the game: D-pad left votes yes, right no),
